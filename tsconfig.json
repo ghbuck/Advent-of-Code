@@ -1,0 +1,17 @@
+{
+  "extends": "@tsconfig/node-lts/tsconfig.json",
+  "ts-node": {},
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "alwaysStrict": true,
+    "allowUnreachableCode": false,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "paths": {
+      "utils/*": ["./src/utils/*"]
+    }
+  },
+  "exclude": ["node_modules"],
+  "include": ["src"]
+}
