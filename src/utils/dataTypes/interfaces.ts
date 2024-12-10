@@ -23,7 +23,7 @@ export interface AnswerParams {
   solution: Solution
 }
 
-export interface Coordinates {
+export interface Point {
   x: number
   y: number
 }

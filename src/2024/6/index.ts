@@ -1,4 +1,4 @@
-import { Coordinates, RunParams, Solution } from 'utils/dataTypes/index.js'
+import { Point, RunParams, Solution } from 'utils/dataTypes/index.js'
 import { getInput } from 'utils/files/index.js'
 import { isBetween } from 'utils/maths/index.js'
 import { printAnswers } from 'utils/printing/index.js'
@@ -8,31 +8,20 @@ interface Direction {
   y: -1 | 0 | 1
 }
 
-interface ObstructionInfo {
-  coordinates: Coordinates
-  newDirection: Direction
+interface PositionInfo {
+  point: Point
+  direction: Direction
 }
 
-interface KnownObstructionInfo {
-  first: ObstructionInfo
-  second: ObstructionInfo
-  third: ObstructionInfo
-}
-
-interface RouteInfo {
-  numUniqueLocations: number
-  numAddedObstructions: number
-}
-
-const getStartingPosition = (map: string[][]): Coordinates => {
-  let caratPosition: Coordinates = {
+const getStartingPosition = (map: string[][]): Point => {
+  let caratPosition: Point = {
     x: 0,
     y: 0,
   }
 
   for (
     let rowIndex = 0;
-    rowIndex < map.length && caratPosition === undefined;
+    rowIndex < map.length;
     ++rowIndex
   ) {
     const row = map[rowIndex]
@@ -43,6 +32,8 @@ const getStartingPosition = (map: string[][]): Coordinates => {
         x: caratIndex,
         y: rowIndex,
       }
+
+      break
     }
   }
 
@@ -50,146 +41,88 @@ const getStartingPosition = (map: string[][]): Coordinates => {
 }
 
 const nextPositionOk = (
-  nextPosition: Coordinates,
-  maxPosition: Coordinates,
+  nextPosition: Point | undefined,
+  maxPosition: Point,
 ): boolean => {
   return (
+    nextPosition !== undefined &&
     isBetween(nextPosition.x, 0, maxPosition.x, true) &&
     isBetween(nextPosition.y, 0, maxPosition.y, true)
   )
 }
 
-const compareDirections = (dir1: Direction, dir2: Direction): boolean => {
-  return dir1.x === dir2.x && dir1.y === dir2.y
+const getNextPosition = (currentPosition: Point, direction: Direction): Point => {
+  return {
+      x: currentPosition.x + direction.x,
+      y: currentPosition.y + direction.y,
+    }
 }
 
-const calculateLoopPositions = (
-  obstructionPositions: ObstructionInfo[],
-): Set<string> => {
-  const addedObstructions = new Set<string>()
+const changeDirection = (direction: Direction): Direction => {
+  let newDirection: Direction = direction
 
-  for (const position of obstructionPositions) {
-    let secondPosition: ObstructionInfo | undefined
-    let thirdPosition: ObstructionInfo | undefined
-
-    if (compareDirections(position.newDirection, { x: 1, y: 0 })) {
-      secondPosition = obstructionPositions.find(
-        (item: ObstructionInfo) =>
-          item.coordinates.y === position.coordinates.y + 1,
-      )
-      if (secondPosition !== undefined) {
-        thirdPosition = obstructionPositions.find(
-          (item: ObstructionInfo) =>
-            item.coordinates.y === position.coordinates.y + 1,
-        )
-      }
-    } else if (compareDirections(position.newDirection, { x: -1, y: 0 })) {
-      break
-    } else if (compareDirections(position.newDirection, { x: 0, y: 1 })) {
-      break
-    } else if (compareDirections(position.newDirection, { x: 0, y: -1 })) {
-      break
+  if (direction.x === 0) {
+    newDirection = {
+      x: direction.y < 0 ? 1 : -1,
+      y: 0,
     }
-
-    if (secondPosition !== undefined && thirdPosition !== undefined) {
-      const knownPositions: KnownObstructionInfo = {
-        first: position,
-        second: secondPosition,
-        third: thirdPosition,
-      }
-      console.log(knownPositions)
+  } else if (direction.y === 0) {
+    newDirection = {
+      x: 0,
+      y: direction.x < 0 ? -1 : 1,
     }
   }
 
-  return addedObstructions
+  return newDirection
 }
 
-const processRoute = (map: string[][], maxPosition: Coordinates): RouteInfo => {
+const processRoute = (map: string[][], maxPosition: Point): number => {
   const uniquePositions = new Set<string>()
-  const obstructionPositions: ObstructionInfo[] = []
 
   let caratPosition = getStartingPosition(map)
-  uniquePositions.add(`${caratPosition.x}, ${caratPosition.y}`)
+  uniquePositions.add(JSON.stringify(caratPosition))
 
   let direction: Direction = {
     x: 0,
     y: -1,
   }
 
-  let nextPosition: Coordinates = {
-    x: 0,
-    y: 0,
-  }
+  let nextPosition: Point = getNextPosition(caratPosition, direction)
 
   while (nextPositionOk(nextPosition, maxPosition)) {
-    nextPosition = {
-      x: caratPosition.x + direction.x,
-      y: caratPosition.y + direction.y,
+    if (map[nextPosition.y][nextPosition.x] === '#') {
+      direction = changeDirection(direction)
+      nextPosition = getNextPosition(caratPosition, direction)
     }
 
-    if (nextPositionOk(nextPosition, maxPosition)) {
-      if (map[nextPosition.y][nextPosition.x] === '#') {
-        if (direction.x === 0) {
-          direction = {
-            x: direction.y < 0 ? 1 : -1,
-            y: 0,
-          }
-        } else if (direction.y === 0) {
-          direction = {
-            x: 0,
-            y: direction.x < 0 ? -1 : 1,
-          }
-        }
+    caratPosition = nextPosition
+    uniquePositions.add(JSON.stringify(caratPosition))
 
-        obstructionPositions.push({
-          coordinates: {
-            x: nextPosition.x,
-            y: nextPosition.y,
-          },
-          newDirection: {
-            x: direction.x,
-            y: direction.y,
-          },
-        })
-
-        nextPosition = {
-          x: caratPosition.x + direction.x,
-          y: caratPosition.y + direction.y,
-        }
-      }
-
-      caratPosition = nextPosition
-      uniquePositions.add(`${caratPosition.x}, ${caratPosition.y}`)
-    }
+    nextPosition = getNextPosition(caratPosition, direction)
   }
 
-  return {
-    numUniqueLocations: uniquePositions.size,
-    numAddedObstructions: calculateLoopPositions(obstructionPositions).size,
-  }
+  return uniquePositions.size
 }
 
 export const run = (params: RunParams) => {
   const solution: Solution = {
     part1: params.isTest ? 41 : 5212,
-    part2: params.isTest ? 6 : undefined,
+    part2: params.isTest ? 6 : 1767,
   }
 
   const map = getInput(params)
     .split('\n')
     .map((row: string) => row.split(''))
 
-  const maxPosition: Coordinates = {
+  const maxPosition: Point = {
     x: map[0].length - 1,
     y: map.length - 1,
   }
 
-  const routeInfo = processRoute(map, maxPosition)
-
   printAnswers({
     params,
-    answer1: routeInfo.numUniqueLocations,
-    answer2: routeInfo.numAddedObstructions,
+    answer1: processRoute(map, maxPosition),
+    answer2: undefined,
     solution,
   })
 }
