@@ -8,7 +8,7 @@ export interface RunParams {
 }
 
 export interface Day {
-  run: (params: RunParams) => void
+  run: (params: RunParams) => Promise<void>
 }
 
 export interface Solution {
