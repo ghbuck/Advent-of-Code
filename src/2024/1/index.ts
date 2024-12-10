@@ -38,11 +38,7 @@ const getDifferenceScore = ({ left, right }: Lists): number => {
 }
 
 const getSimilarityScore = ({ left, right }: Lists): number => {
-  return left.reduce(
-    (total, current) =>
-      (total += current * right.filter((item) => item === current).length),
-    0,
-  )
+  return left.reduce((total, current) => (total += current * right.filter((item) => item === current).length), 0)
 }
 
 export const run = (params: RunParams) => {

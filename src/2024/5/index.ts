@@ -1,5 +1,6 @@
 import { RunParams, Solution } from 'utils/dataTypes/index.js'
 import { getInput } from 'utils/files/index.js'
+import { getIntersection } from 'utils/maths/index.js'
 import { printAnswers } from 'utils/printing/index.js'
 
 interface RuleDef {
@@ -30,9 +31,7 @@ const getRule = (rules: RulesMap, item: number): RuleDef => {
 }
 
 const getRules = (rulesString: string): RulesMap => {
-  const rulesArray = rulesString
-    .split('\n')
-    .map((row) => row.split('|').map(Number))
+  const rulesArray = rulesString.split('\n').map((row) => row.split('|').map(Number))
 
   const rules = new Map<number, RuleDef>()
   for (const item of rulesArray) {
@@ -46,10 +45,7 @@ const getRules = (rulesString: string): RulesMap => {
   return rules
 }
 
-const processUpdates = (
-  rules: RulesMap,
-  updates: string[],
-): ProcessedUpdates => {
+const processUpdates = (rules: RulesMap, updates: string[]): ProcessedUpdates => {
   const processedUpdates: ProcessedUpdates = {
     valid: [],
     invalid: [],
@@ -65,7 +61,7 @@ const processUpdates = (
 
       if (pageRules !== undefined) {
         const nextPages = new Set(pages.slice(pageIndex + 1))
-        isValid = nextPages.intersection(pageRules.after).size === 0
+        isValid = getIntersection(nextPages, pageRules.after).size === 0
       }
     }
 
@@ -79,16 +75,11 @@ const processUpdates = (
   return processedUpdates
 }
 
-const fixInvalidUpdates = (
-  rules: RulesMap,
-  updates: number[][],
-): number[][] => {
+const fixInvalidUpdates = (rules: RulesMap, updates: number[][]): number[][] => {
   const fixedUpdates: number[][] = []
 
   for (const update of updates) {
-    const fixedPages = update.toSorted((a: number, b: number): number =>
-      rules.get(a)?.after.has(b) ? -1 : rules.get(b)?.after.has(a) ? 1 : 0,
-    )
+    const fixedPages = update.toSorted((a: number, b: number): number => (rules.get(a)?.after.has(b) ? -1 : rules.get(b)?.after.has(a) ? 1 : 0))
 
     fixedUpdates.push(fixedPages)
   }
@@ -113,16 +104,8 @@ export const run = (params: RunParams) => {
 
   printAnswers({
     params,
-    answer1: processedUpdates.valid.reduce(
-      (total: number, row: number[]) =>
-        (total += row[Math.floor(row.length / 2)]),
-      0,
-    ),
-    answer2: fixedUpdates.reduce(
-      (total: number, row: number[]) =>
-        (total += row[Math.floor(row.length / 2)]),
-      0,
-    ),
+    answer1: processedUpdates.valid.reduce((total: number, row: number[]) => (total += row[Math.floor(row.length / 2)]), 0),
+    answer2: fixedUpdates.reduce((total: number, row: number[]) => (total += row[Math.floor(row.length / 2)]), 0),
     solution,
   })
 }

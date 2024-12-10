@@ -1,10 +1,6 @@
-import { Point } from "utils/dataTypes/index.js"
+import { Point } from 'utils/dataTypes/index.js'
 
-export const findFourthPoint = (
-  p1: Point,
-  p2: Point,
-  p3: Point,
-): Point => {
+export const findFourthPoint = (p1: Point, p2: Point, p3: Point): Point => {
   const midpoint = {
     x: (p1.x + p2.x) / 2,
     y: (p1.y + p2.y) / 2,

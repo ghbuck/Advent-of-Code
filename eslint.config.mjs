@@ -15,7 +15,7 @@ export default tseslint.config(
     },
   },
   {
-    ignores: ['eslint.config.mjs', 'prettier.config.mjs', 'src/dayTemplate/*']
+    ignores: ['eslint.config.mjs', 'prettier.config.mjs', 'lint-staged.config.mjs', 'src/dayTemplate/*']
   },
   eslint.configs.recommended,
   tseslint.configs.recommendedTypeChecked,

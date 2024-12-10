@@ -1,17 +1,9 @@
-const checkWestToEast = (
-  input: string[][],
-  rowIndex: number,
-  charIndex: number,
-): boolean => {
+const checkWestToEast = (input: string[][], rowIndex: number, charIndex: number): boolean => {
   const chars = `${input[rowIndex - 1]?.[charIndex - 1]}A${input[rowIndex + 1]?.[charIndex + 1]}`
   return chars === 'MAS' || chars === 'SAM'
 }
 
-const checkEastToWest = (
-  input: string[][],
-  rowIndex: number,
-  charIndex: number,
-): boolean => {
+const checkEastToWest = (input: string[][], rowIndex: number, charIndex: number): boolean => {
   const chars = `${input[rowIndex - 1]?.[charIndex + 1]}A${input[rowIndex + 1]?.[charIndex - 1]}`
   return chars === 'MAS' || chars === 'SAM'
 }
@@ -26,11 +18,7 @@ export const checkForX_MAS = (input: string[][]): number => {
       const char = row[charIndex]
 
       if (char === 'A') {
-        numFoundWords +=
-          checkWestToEast(input, rowIndex, charIndex) &&
-          checkEastToWest(input, rowIndex, charIndex)
-            ? 1
-            : 0
+        numFoundWords += checkWestToEast(input, rowIndex, charIndex) && checkEastToWest(input, rowIndex, charIndex) ? 1 : 0
       }
     }
   }

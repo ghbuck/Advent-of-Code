@@ -13,22 +13,23 @@ interface PositionInfo {
   direction: Direction
 }
 
-const getStartingPosition = (map: string[][]): Point => {
-  let caratPosition: Point = {
+interface RouteInfo {
+  locations: Set<string>
+  isLoop: boolean
+}
+
+const getStartingPosition = (map: string[][]): PositionInfo => {
+  let point: Point = {
     x: 0,
     y: 0,
   }
 
-  for (
-    let rowIndex = 0;
-    rowIndex < map.length;
-    ++rowIndex
-  ) {
+  for (let rowIndex = 0; rowIndex < map.length; ++rowIndex) {
     const row = map[rowIndex]
     const caratIndex = row.indexOf('^')
 
     if (caratIndex >= 0) {
-      caratPosition = {
+      point = {
         x: caratIndex,
         y: rowIndex,
       }
@@ -37,71 +38,91 @@ const getStartingPosition = (map: string[][]): Point => {
     }
   }
 
-  return caratPosition
-}
-
-const nextPositionOk = (
-  nextPosition: Point | undefined,
-  maxPosition: Point,
-): boolean => {
-  return (
-    nextPosition !== undefined &&
-    isBetween(nextPosition.x, 0, maxPosition.x, true) &&
-    isBetween(nextPosition.y, 0, maxPosition.y, true)
-  )
-}
-
-const getNextPosition = (currentPosition: Point, direction: Direction): Point => {
   return {
-      x: currentPosition.x + direction.x,
-      y: currentPosition.y + direction.y,
-    }
+    point,
+    direction: {
+      x: 0,
+      y: -1,
+    },
+  }
+}
+
+const nextPositionOk = (nextPosition: PositionInfo | undefined, maxPosition: Point): boolean => {
+  return nextPosition !== undefined && isBetween(nextPosition.point.x, 0, maxPosition.x, true) && isBetween(nextPosition.point.y, 0, maxPosition.y, true)
+}
+
+const getNextPosition = (currentPosition: PositionInfo): PositionInfo => {
+  return {
+    point: {
+      x: currentPosition.point.x + currentPosition.direction.x,
+      y: currentPosition.point.y + currentPosition.direction.y,
+    },
+    direction: currentPosition.direction,
+  }
 }
 
 const changeDirection = (direction: Direction): Direction => {
-  let newDirection: Direction = direction
-
-  if (direction.x === 0) {
-    newDirection = {
-      x: direction.y < 0 ? 1 : -1,
-      y: 0,
-    }
-  } else if (direction.y === 0) {
-    newDirection = {
-      x: 0,
-      y: direction.x < 0 ? -1 : 1,
-    }
+  return {
+    x: direction.x !== 0 ? 0 : direction.y < 0 ? 1 : -1,
+    y: direction.y !== 0 ? 0 : direction.x < 0 ? -1 : 1,
   }
-
-  return newDirection
 }
 
-const processRoute = (map: string[][], maxPosition: Point): number => {
-  const uniquePositions = new Set<string>()
+const processRoute = (map: string[][], maxPosition: Point, checkLoop = false): RouteInfo => {
+  const locations = new Set<string>()
 
   let caratPosition = getStartingPosition(map)
-  uniquePositions.add(JSON.stringify(caratPosition))
+  locations.add(JSON.stringify(caratPosition.point))
 
-  let direction: Direction = {
-    x: 0,
-    y: -1,
-  }
+  let nextPosition = getNextPosition(caratPosition)
 
-  let nextPosition: Point = getNextPosition(caratPosition, direction)
-
+  let isLoop = false
   while (nextPositionOk(nextPosition, maxPosition)) {
-    if (map[nextPosition.y][nextPosition.x] === '#') {
-      direction = changeDirection(direction)
-      nextPosition = getNextPosition(caratPosition, direction)
+    if (checkLoop && locations.has(JSON.stringify(nextPosition.point))) {
+      isLoop = true
+      break
+    }
+
+    if (map[nextPosition.point.y][nextPosition.point.x] === '#') {
+      caratPosition.direction = changeDirection(caratPosition.direction)
+      nextPosition = getNextPosition(caratPosition)
     }
 
     caratPosition = nextPosition
-    uniquePositions.add(JSON.stringify(caratPosition))
+    locations.add(JSON.stringify(caratPosition.point))
 
-    nextPosition = getNextPosition(caratPosition, direction)
+    nextPosition = getNextPosition(caratPosition)
   }
 
-  return uniquePositions.size
+  return {
+    locations,
+    isLoop,
+  }
+}
+
+const findLoopObstructionLocationCount = (routeLocations: Set<string>, map: string[][], maxPoint: Point): Set<string> => {
+  const locationsCopy = new Set<string>()
+  for (const location of routeLocations) {
+    locationsCopy.add(location)
+  }
+
+  const loopPositions = new Set<string>()
+
+  const startingPosition = getStartingPosition(map)
+  locationsCopy.delete(JSON.stringify(startingPosition.point))
+
+  for (const locationString of locationsCopy) {
+    const location = JSON.parse(locationString) as Point
+    const mapClone = [...map]
+
+    mapClone[location.y][location.x] = '#'
+
+    if (processRoute(mapClone, maxPoint, true).isLoop) {
+      loopPositions.add(locationString)
+    }
+  }
+
+  return loopPositions
 }
 
 export const run = (params: RunParams) => {
@@ -119,10 +140,13 @@ export const run = (params: RunParams) => {
     y: map.length - 1,
   }
 
+  const uniqueLocations = processRoute(map, maxPosition).locations
+  const loopLocations = findLoopObstructionLocationCount(uniqueLocations, map, maxPosition)
+
   printAnswers({
     params,
-    answer1: processRoute(map, maxPosition),
-    answer2: undefined,
+    answer1: uniqueLocations.size,
+    answer2: loopLocations.size,
     solution,
   })
 }

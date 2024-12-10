@@ -9,11 +9,7 @@ interface ReportState {
   unsafeCount: number
 }
 
-const checkValues = (
-  item1: number,
-  item2: number,
-  state: ReportState,
-): ReportState => {
+const checkValues = (item1: number, item2: number, state: ReportState): ReportState => {
   const diff = item1 - item2
   const localIsDescending = diff > 0
 
@@ -21,10 +17,7 @@ const checkValues = (
     state.isDescending = localIsDescending
   }
 
-  if (
-    state.isDescending !== localIsDescending ||
-    !isBetween(Math.abs(diff), 0, 4)
-  ) {
+  if (state.isDescending !== localIsDescending || !isBetween(Math.abs(diff), 0, 4)) {
     ++state.unsafeCount
   }
 
@@ -50,10 +43,7 @@ const checkReport = (report: number[]): ReportState => {
   }
 }
 
-const getNumSafeReports = (
-  inputArray: number[][],
-  maxUnsafe: 0 | 1 = 0,
-): number => {
+const getNumSafeReports = (inputArray: number[][], maxUnsafe: 0 | 1 = 0): number => {
   let numSafeReports = 0
 
   for (const report of inputArray) {

@@ -36,10 +36,7 @@ const operationsCanMakeTotal = (line: LineItem, doConcat: boolean): boolean => {
   return Array.from(dp[numbers.length]).includes(line.total)
 }
 
-const getTotalCalibrationResult = (
-  lines: LineItem[],
-  doConcat: boolean,
-): number => {
+const getTotalCalibrationResult = (lines: LineItem[], doConcat: boolean): number => {
   const totals: number[] = []
 
   for (const line of lines) {

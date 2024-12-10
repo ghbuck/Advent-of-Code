@@ -1,42 +1,20 @@
 import kleur from 'kleur'
 import type { AnswerParams } from 'utils/dataTypes/index.js'
 
-const checkAnswer = (
-  answer: number | undefined,
-  solution: number | undefined,
-): string => {
-  return answer === undefined
-    ? kleur.yellow('unrun')
-    : answer === solution
-      ? kleur.green('correct')
-      : solution === undefined
-        ? kleur.yellow('unsolved')
-        : kleur.red('incorrect')
+const checkAnswer = (answer: number | undefined, solution: number | undefined): string => {
+  return answer === undefined ? kleur.yellow('unrun') : answer === solution ? kleur.green('correct') : solution === undefined ? kleur.yellow('unsolved') : kleur.red('incorrect')
 }
 
-export const printAnswers = ({
-  params: { day, part },
-  answer1,
-  answer2,
-  solution,
-}: AnswerParams) => {
+export const printAnswers = ({ params: { day, part }, answer1, answer2, solution }: AnswerParams) => {
   const doPart1 = part === 'all' || part === 1
   const doPart2 = part === 'all' || part === 2
 
   if (doPart1) {
-    console.log(
-      kleur.blue(
-        `Day ${day}, Part 1 answer: ${answer1 ?? ''} (${checkAnswer(answer1, solution.part1)}) ${!doPart2 ? '\n' : ''}`,
-      ),
-    )
+    console.log(kleur.blue(`Day ${day}, Part 1 answer: ${answer1 ?? ''} (${checkAnswer(answer1, solution.part1)}) ${!doPart2 ? '\n' : ''}`))
   }
 
   if (doPart2) {
-    console.log(
-      kleur.blue(
-        `Day ${day}, Part 2 answer: ${answer2 ?? ''} (${checkAnswer(answer2, solution.part2)})\n`,
-      ),
-    )
+    console.log(kleur.blue(`Day ${day}, Part 2 answer: ${answer2 ?? ''} (${checkAnswer(answer2, solution.part2)})\n`))
   }
 }
 
