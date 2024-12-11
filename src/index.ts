@@ -1,7 +1,7 @@
 import kleur from 'kleur'
 import { performance } from 'perf_hooks'
 import { Day, PartNum, RunParams } from 'utils/dataTypes/index.js'
-import { createNewDay, saveSessionId } from 'utils/files/index.js'
+import { createNewDay, setSessionId } from 'utils/files/index.js'
 import { printRunTime } from 'utils/printing/index.js'
 
 const params: RunParams = {
@@ -33,7 +33,7 @@ const runDay = async (params: RunParams) => {
 if (params.createNewDay) {
   await createNewDay(params)
 } else if (params.saveSessionId) {
-  saveSessionId(process.argv[3] ?? '')
+  setSessionId(process.argv[3] ?? '')
 } else {
   await runDay(params)
 }
