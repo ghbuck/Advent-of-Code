@@ -86,11 +86,10 @@ export const run = async (params: RunParams) => {
     part2: params.isTest ? 81 : 1034,
   }
 
-  const input = getInput(params)
-    .split('\n')
-    .map((row: string) => row.split('').map(Number))
+  const input = await getInput(params)
+  const inputArray = input.split('\n').map((row: string) => row.split('').map(Number))
 
-  const trailValues = await evaluateTrails(input, 9)
+  const trailValues = await evaluateTrails(inputArray, 9)
 
   printAnswers({
     params,

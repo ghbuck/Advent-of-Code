@@ -71,15 +71,14 @@ const getNumSafeReports = (inputArray: number[][], maxUnsafe: 0 | 1 = 0): number
   return numSafeReports
 }
 
-export const run = (params: RunParams) => {
+export const run = async (params: RunParams) => {
   const solution: Solution = {
     part1: params.isTest ? 2 : 624,
     part2: params.isTest ? 4 : 658,
   }
 
-  const inputArray = getInput(params)
-    .split('\n')
-    .map((row: string) => row.split(/\s+/).map(Number))
+  const input = await getInput(params)
+  const inputArray = input.split('\n').map((row: string) => row.split(/\s+/).map(Number))
 
   const answer1 = getNumSafeReports(inputArray)
   const answer2 = getNumSafeReports(inputArray, 1)

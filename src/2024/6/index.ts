@@ -132,15 +132,14 @@ const findLoopObstructionLocationCount = (routeLocations: Set<string>, map: stri
   return loopPositions
 }
 
-export const run = (params: RunParams) => {
+export const run = async (params: RunParams) => {
   const solution: Solution = {
     part1: params.isTest ? 41 : 5212,
     part2: params.isTest ? 6 : 1767,
   }
 
-  const map = getInput(params)
-    .split('\n')
-    .map((row: string) => row.split(''))
+  const input = await getInput(params)
+  const map = input.split('\n').map((row: string) => row.split(''))
 
   const maxPosition: Point = {
     x: map[0].length - 1,

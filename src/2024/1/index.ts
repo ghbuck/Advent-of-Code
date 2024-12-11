@@ -7,14 +7,13 @@ interface Lists {
   right: number[]
 }
 
-const getLists = (inputArray: string[]): Lists => {
+const getLists = (inputArray: number[][]): Lists => {
   const left: number[] = []
   const right: number[] = []
 
-  for (const line of inputArray) {
-    const parts = line.split(/\s+/)
-    left.push(parseInt(parts[0]))
-    right.push(parseInt(parts[1]))
+  for (const row of inputArray) {
+    left.push(row[0])
+    right.push(row[1])
   }
 
   left.sort()
@@ -41,13 +40,15 @@ const getSimilarityScore = ({ left, right }: Lists): number => {
   return left.reduce((total, current) => (total += current * right.filter((item) => item === current).length), 0)
 }
 
-export const run = (params: RunParams) => {
+export const run = async (params: RunParams) => {
   const solution: Solution = {
     part1: params.isTest ? 11 : 2164381,
     part2: params.isTest ? 31 : 20719933,
   }
 
-  const inputArray = getInput(params).split('\n')
+  const input = await getInput(params)
+  const inputArray = input.split('\n').map((row: string) => row.split(/\s+/).map(Number))
+
   const lists = getLists(inputArray)
 
   printAnswers({

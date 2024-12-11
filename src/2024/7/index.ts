@@ -48,21 +48,20 @@ const getTotalCalibrationResult = (lines: LineItem[], doConcat: boolean): number
   return totals.reduce((total: number, current: number) => total + current, 0)
 }
 
-export const run = (params: RunParams) => {
+export const run = async (params: RunParams) => {
   const solution: Solution = {
     part1: params.isTest ? 3749 : 12839601725877,
     part2: params.isTest ? 11387 : 149956401519484,
   }
 
-  const lines = getInput(params)
-    .split('\n')
-    .map((row: string): LineItem => {
-      const [total, numbers] = row.split(': ')
-      return {
-        total: Number(total),
-        numbers: numbers.split(' ').map(Number),
-      }
-    })
+  const input = await getInput(params)
+  const lines = input.split('\n').map((row: string): LineItem => {
+    const [total, numbers] = row.split(': ')
+    return {
+      total: Number(total),
+      numbers: numbers.split(' ').map(Number),
+    }
+  })
 
   printAnswers({
     params,

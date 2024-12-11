@@ -2,13 +2,13 @@ import { RunParams, Solution } from 'utils/dataTypes/index.js'
 import { getInput } from 'utils/files/index.js'
 import { printAnswers } from 'utils/printing/index.js'
 
-export const run = (params: RunParams) => {
+export const run = async (params: RunParams) => {
   const solution: Solution = {
     part1: params.isTest ? undefined : undefined,
     part2: params.isTest ? undefined : undefined,
   }
 
-  const inputString = getInput(params)
+  const inputString = await getInput(params)
 
   printAnswers({
     params,

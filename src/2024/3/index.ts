@@ -30,13 +30,13 @@ const getTotalWithDoCommands = (inputString: string): number => {
   return getTotal(newString)
 }
 
-export const run = (params: RunParams) => {
+export const run = async (params: RunParams) => {
   const solution: Solution = {
     part1: params.isTest ? 161 : 173517243,
     part2: params.isTest ? 48 : 100450138,
   }
 
-  const inputString = getInput(params)
+  const inputString = await getInput(params)
 
   printAnswers({
     params,

@@ -1,7 +1,7 @@
 const config = {
   semi: false,
   singleQuote: true,
-  printWidth: 200
+  printWidth: 300
 };
 
 export default config;

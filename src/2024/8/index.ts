@@ -1,16 +1,16 @@
-import { Coordinates, RunParams, Solution } from 'utils/dataTypes/index.js'
+import { Point, RunParams, Solution } from 'utils/dataTypes/index.js'
 import { getInput } from 'utils/files/index.js'
 import { printAnswers } from 'utils/printing/index.js'
 
 interface NodeInfo {
-  nodes: Coordinates[]
-  antinodes: Coordinates[]
+  nodes: Point[]
+  antinodes: Point[]
 }
 
 type NodeMap = Map<string, NodeInfo>
 
 const findAntinodes = (input: string[][]): number => {
-  const inputSize: Coordinates = {
+  const inputSize: Point = {
     x: input[0].length,
     y: input.length,
   }
@@ -21,7 +21,7 @@ const findAntinodes = (input: string[][]): number => {
       const item = input[rowIndex][colIndex]
 
       if (item !== '.') {
-        let info = nodeMap.get(item) ?? {
+        const info = nodeMap.get(item) ?? {
           nodes: [],
           antinodes: [],
         }
@@ -43,21 +43,20 @@ const findAntinodes = (input: string[][]): number => {
   return 0
 }
 
-export const run = (params: RunParams) => {
+export const run = async (params: RunParams) => {
   const solution: Solution = {
     part1: params.isTest ? 14 : undefined,
     part2: params.isTest ? undefined : undefined,
   }
 
-  const input = getInput(params)
-    .split('\n')
-    .map((row: string) => row.split(''))
+  const input = await getInput(params)
+  const inputArray = input.split('\n').map((row: string) => row.split(''))
 
-  const nodeMap = findAntinodes(input)
+  const nodeMap = findAntinodes(inputArray)
 
   printAnswers({
     params,
-    answer1: undefined,
+    answer1: nodeMap,
     answer2: undefined,
     solution,
   })

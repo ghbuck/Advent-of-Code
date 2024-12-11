@@ -87,13 +87,13 @@ const fixInvalidUpdates = (rules: RulesMap, updates: number[][]): number[][] => 
   return fixedUpdates
 }
 
-export const run = (params: RunParams) => {
+export const run = async (params: RunParams) => {
   const solution: Solution = {
     part1: params.isTest ? 143 : 4578,
     part2: params.isTest ? 123 : 6179,
   }
 
-  const inputString = getInput(params)
+  const inputString = await getInput(params)
   const inputArray = inputString.split('\n\n')
 
   const rules = getRules(inputArray[0])

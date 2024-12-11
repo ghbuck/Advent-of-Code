@@ -5,8 +5,9 @@
   "scripts": {
     "lint": "eslint .",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
-    "start": "tsx src/index.ts",
-    "prepare": "husky install"
+    "newday": "tsx src/index.ts --newday",
+    "session": "tsx src/index.ts --saveSessionId",
+    "start": "tsx src/index.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
@@ -23,7 +24,9 @@
     "typescript-eslint": "^8.17.0"
   },
   "dependencies": {
+    "@inquirer/select": "^4.0.3",
     "kleur": "^4.1.5",
+    "mac-ca": "^3.1.0",
     "perf_hooks": "^0.0.1"
   },
   "lint-staged": {

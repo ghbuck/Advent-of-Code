@@ -5,6 +5,8 @@ export interface RunParams {
   day: number
   part: PartNum
   isTest: boolean
+  createNewDay: boolean
+  saveSessionId: boolean
 }
 
 export interface Day {
