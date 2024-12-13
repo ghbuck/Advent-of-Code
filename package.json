@@ -7,10 +7,12 @@
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
     "newday": "tsx src/index.ts --newday",
     "session": "tsx src/index.ts --session",
-    "start": "tsx src/index.ts"
+    "start": "tsx src/index.ts",
+    "test": "jest"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
+    "@jest/globals": "^29.7.0",
     "@tsconfig/node-lts": "^22.0.1",
     "@types/node": "^22.10.1",
     "eslint": "^9.16.0",
@@ -18,7 +20,8 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.2.10",
     "prettier": "^3.4.2",
-    "suppress-experimental-warnings": "^2.0.0",
+    "ts-jest": "^29.2.5",
+    "ts-jest-resolver": "^2.0.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.17.0"

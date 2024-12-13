@@ -14,7 +14,7 @@ export class Bounds {
 
   constructor(args?: IBounds) {
     this.#min = args?.min ?? { x: 0, y: 0 }
-    this.#max = args?.max ?? this.#min
+    this.#max = args?.max ?? { x: 0, y: 0 }
   }
 
   //#region Private methods
@@ -66,6 +66,8 @@ export class Bounds {
 
   //#endregion
 
+  //#region (Re)Setters
+
   /**
    * Puts a point within the bounds, expanding the bounds if needed.
    * This is a non-reversible change.
@@ -83,6 +85,18 @@ export class Bounds {
       }
     }
   }
+
+  /**
+   * Resets the bounds to (0,0) for both min and max
+   */
+  clear() {
+    this.#min = { x: 0, y: 0 }
+    this.#max = { x: 0, y: 0 }
+  }
+
+  //#endregion
+
+  //#region Logical methods
 
   isInside(point: Point): boolean {
     return this.#isGreaterOrEqualToMin(point) && this.#isLesserOrEqualToMax(point)

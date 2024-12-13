@@ -36,16 +36,31 @@ export class Grid<T> {
   #cells: Map<number, Cell<T>>
   #bounds: Bounds
 
-  constructor(args: IGrid<T>) {
+  constructor(args?: IGrid<T>) {
     this.#cells = new Map<number, Cell<T>>()
+    this.#bounds = new Bounds()
+
+    if (args !== undefined) {
+      this.setGrid(args)
+    }
+  }
+
+  /**
+   * If you've instantiated the grid without input you may call this method.
+   *
+   * **!Warning¡** this is a destructive procedure if you already have cells in this grid
+   *
+   * @param {IGrid<T>} args - the input string, splitters, and typeConstructor needed to generate the grid
+   */
+  setGrid(args: IGrid<T>) {
+    this.#cells.clear()
+    this.#bounds.clear()
 
     const inputArray = args.input.split(args.splitter1).map((row: string) => row.split(args.splitter2).map(args.typeConstructor))
 
-    this.#bounds = new Bounds({
-      max: {
-        x: inputArray.reduce((longestRow, row) => (row.length > longestRow.length ? row : longestRow), []).length - 1,
-        y: inputArray.length - 1,
-      },
+    this.#bounds.put({
+      x: inputArray.reduce((longestRow, row) => (row.length > longestRow.length ? row : longestRow), []).length - 1,
+      y: inputArray.length - 1,
     })
 
     let counter = 0
@@ -168,6 +183,16 @@ export class Grid<T> {
   //#region Cell methods
 
   /**
+   *
+   * @param {number} rowNum - the grid `y` value
+   * @param {number} colNum - the grid `x` value
+   * @returns {T | undefined} the item, if it exists, otherwise `undefined`
+   */
+  getItem(rowNum: number, colNum: number): T | undefined {
+    return [...this.#cells.values()].filter((cell: Cell<T>) => cell.point.x === colNum - 1 && cell.point.y === rowNum - 1).map((cell: Cell<T>) => cell.item)[0]
+  }
+
+  /**
    * a useful method for when you need to do things with
    *
    * @returns a set of unique grid items
@@ -267,7 +292,6 @@ export class Grid<T> {
       const neighbors = await this.#findNeighbors(firstCell)
 
       regions.push({
-        // points: cells.filter((entry: [number, Cell<T>]) => neighbors.has(entry[0])).map((entry: [number, Cell<T>]) => entry[1].point),
         cellNumbers: [...neighbors].sort(),
         area: 0,
         perimeter: 0,

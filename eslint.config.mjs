@@ -15,7 +15,13 @@ export default tseslint.config(
     },
   },
   {
-    ignores: ['eslint.config.mjs', 'prettier.config.mjs', 'lint-staged.config.mjs', 'src/utils/template/index.ts']
+    ignores: [
+      'eslint.config.mjs',
+      'lint-staged.config.mjs',
+      'jest.config.mjs',
+      'prettier.config.mjs',
+      'src/utils/template/index.ts'
+    ]
   },
   eslint.configs.recommended,
   tseslint.configs.recommendedTypeChecked,
