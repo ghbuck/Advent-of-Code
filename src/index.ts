@@ -4,13 +4,50 @@ import { Day, PartNum, RunParams } from 'utils/dataTypes/index.js'
 import { createNewDay, setSessionId } from 'utils/files/index.js'
 import { printRunTime } from 'utils/printing/index.js'
 
+const defaultDate = new Date()
+let sessionId = ''
+
 const params: RunParams = {
-  year: (process.env.npm_config_year ?? new Date().getFullYear()) as number,
-  day: (process.env.npm_config_daynum ?? 0) as number,
-  part: (process.env.npm_config_part ?? 'all') as PartNum,
-  isTest: process.env.npm_config_t !== undefined,
-  createNewDay: process.argv.includes('--newday'),
-  saveSessionId: process.argv.includes('--saveSessionId'),
+  year: defaultDate.getFullYear(),
+  day: defaultDate.getDate(),
+  part: 'all',
+  isTest: false,
+  createNewDay: false,
+  saveSessionId: false,
+}
+
+for (const [index, arg] of process.argv.entries()) {
+  const nextArg = process.argv[index + 1]
+  switch (arg) {
+    case '-y':
+    case '--year':
+      params.year = Number(nextArg)
+      break
+    case '-d':
+    case '--day':
+      params.day = Number(nextArg)
+      break
+    case '-p':
+    case '--part':
+      if (nextArg === '1' || nextArg == '2') {
+        params.part = nextArg as PartNum
+      }
+      break
+    case '-t':
+    case '--test':
+      params.isTest = true
+      break
+    case '--newday':
+      params.createNewDay = true
+      break
+    case '--session':
+      params.saveSessionId = true
+      if (nextArg === undefined || !(nextArg.length > 100)) {
+        throw new Error(kleur.red('No session id value found in `process.argv`'))
+      }
+      sessionId = nextArg
+      break
+  }
 }
 
 const runDay = async (params: RunParams) => {
@@ -33,7 +70,7 @@ const runDay = async (params: RunParams) => {
 if (params.createNewDay) {
   await createNewDay(params)
 } else if (params.saveSessionId) {
-  setSessionId(process.argv[3] ?? '')
+  setSessionId(sessionId)
 } else {
   await runDay(params)
 }

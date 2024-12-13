@@ -5,6 +5,7 @@ import { RunParams } from 'utils/dataTypes/index.js'
 import { getSessionId } from './readWrite.js'
 
 const baseUrl = 'https://adventofcode.com'
+const userAgent = 'github.com/ghbuck/Advent-of-Code ; contact @ https://github.com/ghbuck/Advent-of-Code/issues/new'
 
 // private
 
@@ -41,6 +42,7 @@ const getRequestHeaders = (): RequestInit => {
     method: 'GET',
     headers: {
       Cookie: `session=${getSessionId()}`,
+      'User-Agent': userAgent,
     },
   }
 }
