@@ -73,7 +73,7 @@ describe('Grid model tests', () => {
 
         for (const [index, row] of testArray.entries()) {
           const gridRow = index + 1
-          expect(grid.getRow(gridRow)).toEqual(row)
+          expect(grid.getRow(gridRow).flat()).toEqual(row)
         }
       })
 
@@ -83,15 +83,16 @@ describe('Grid model tests', () => {
         for (let colIndex = 0; colIndex < numTestCols; ++colIndex) {
           const col = testArray.map((row: string[]) => row[colIndex])
           const gridCol = colIndex + 1
-          expect(grid.getColumn(gridCol)).toEqual(col)
+          expect(grid.getColumn(gridCol).flat()).toEqual(col)
         }
       })
 
-      test('getItem() returns the same value as array[y][x] lookup', () => {
+      test('getCellItems() returns the same value as array[y][x] lookup', () => {
         if (grid === undefined) throw new Error('Test grid is undefined')
 
-        const gridItem = grid.getItem(randomPoint)
-        expect(gridItem).toEqual(testItem)
+        const gridItem = grid.getCellItems(randomPoint)
+
+        expect(gridItem?.join('')).toEqual(testItem)
       })
     })
 
@@ -100,7 +101,7 @@ describe('Grid model tests', () => {
         if (grid === undefined) throw new Error('Test grid is undefined')
 
         grid.deleteItem(randomPoint)
-        expect(grid.getItem(randomPoint)).toBeUndefined()
+        expect(grid.getCellItems(randomPoint)).toBeUndefined()
       })
 
       test('putItem() successfully inserts an item', () => {
@@ -111,7 +112,7 @@ describe('Grid model tests', () => {
         const newItem = '👋'
         grid.putItem(newItem, randomPoint)
 
-        expect(grid.getItem(randomPoint)).toEqual(newItem)
+        expect(grid.getCellItems(randomPoint)?.join('')).toEqual(newItem)
       })
     })
 
@@ -136,7 +137,7 @@ describe('Grid model tests', () => {
         }
 
         expect(gridTuples.length).toEqual(arrayTuples.length)
-        expect(gridTuples.join()).toEqual(arrayTuples.join())
+        expect(gridTuples.join('')).toEqual(arrayTuples.join(''))
       })
     })
   })

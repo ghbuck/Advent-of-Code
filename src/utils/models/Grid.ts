@@ -30,7 +30,7 @@ type NeighborLocation = 'above' | 'below' | 'left' | 'right'
 type NeighborhoodMap = Map<NeighborLocation, number | undefined>
 
 interface Cell<T> {
-  item: T | undefined
+  items: T[]
   point: Point
   neighbors: NeighborhoodMap
 }
@@ -72,7 +72,7 @@ export class Grid<T> {
     for (let rowIndex = 0; rowIndex <= this.#bounds.getMaxY(); ++rowIndex) {
       for (let colIndex = 0; colIndex <= this.#bounds.getMaxX(); ++colIndex) {
         this.#cells.set(++counter, {
-          item: inputArray[rowIndex][colIndex],
+          items: [inputArray[rowIndex][colIndex]],
           point: {
             x: colIndex,
             y: rowIndex,
@@ -105,15 +105,15 @@ export class Grid<T> {
    * @param {T} rowNum - the row to access (i.e.: 1 = first row)
    * @returns the column map for the requested row
    */
-  getRow(rowNum: number): (T | undefined)[] {
-    const row: (T | undefined)[] = []
+  getRow(rowNum: number): T[][] {
+    const colCount = this.#bounds.getMaxX() + 1
+    const row: T[][] = Array<T[]>(colCount)
 
     if (rowNum > 0 && rowNum <= this.#bounds.getMaxY() + 1) {
-      const colCount = this.#bounds.getMaxX() + 1
       for (const [key, value] of this.#cells) {
         const comparator = key / colCount
         if (comparator > rowNum - 1 && comparator <= rowNum) {
-          row.push(value.item)
+          row[value.point.x] = value.items
         }
       }
     }
@@ -145,14 +145,19 @@ export class Grid<T> {
 
     let counter = this.#cells.size
     for (let colIndex = 0; colIndex <= this.#bounds.getMaxX(); ++colIndex) {
-      this.#cells.set(counter++, {
-        item: items?.[colIndex],
-        point: {
-          x: colIndex,
-          y: this.#bounds.getMaxY(),
-        },
-        neighbors: new Map<NeighborLocation, number>(),
-      })
+      const key = counter++
+      const item = items?.[colIndex]
+
+      if (item !== undefined) {
+        this.#cells.set(key, {
+          items: [item],
+          point: {
+            x: colIndex,
+            y: this.#bounds.getMaxY(),
+          },
+          neighbors: new Map<NeighborLocation, number>(),
+        })
+      }
     }
   }
 
@@ -165,8 +170,8 @@ export class Grid<T> {
    * @param colNum - the column to access (i.e.: 1 = first column)
    * @returns an array of sliced column values
    */
-  getColumn(colNum: number): (T | undefined)[] {
-    const col: (T | undefined)[] = []
+  getColumn(colNum: number): T[][] {
+    const col: T[][] = []
 
     const colCount = this.#bounds.getMaxX() + 1
     if (colNum > 0 && colNum <= colCount) {
@@ -176,7 +181,7 @@ export class Grid<T> {
         const calcValue = key / colCount - Math.floor(key / colCount)
 
         if (calcValue.toFixed(10) === checkValue.toFixed(10)) {
-          col.push(value.item)
+          col.push(value.items)
         }
       }
     }
@@ -207,10 +212,10 @@ export class Grid<T> {
   /**
    *
    * @param {Point} point - the coordinates to retrieve
-   * @returns {T | undefined} the item, if it exists, otherwise `undefined`
+   * @returns {T[]} the items array, if it exists, otherwise `undefined`
    */
-  getItem(point: Point): T | undefined {
-    return [...this.#cells.values()].filter((cell: Cell<T>) => cell.point.x === point.x && cell.point.y === point.y).map((cell: Cell<T>) => cell.item)[0]
+  getCellItems(point: Point): T[] | undefined {
+    return [...this.#cells.values()].filter((cell: Cell<T>) => cell.point.x === point.x && cell.point.y === point.y).map((cell: Cell<T>) => cell.items)[0]
   }
 
   /**
@@ -219,15 +224,15 @@ export class Grid<T> {
    * @returns a set of unique grid items
    */
   getUniqueItems(): Set<T> {
-    const definedCells: T[] = []
+    const definedCells: T[][] = []
 
     for (const cell of this.#cells.values()) {
-      if (cell.item !== undefined) {
-        definedCells.push(cell.item)
+      if (cell.items !== undefined) {
+        definedCells.push(cell.items)
       }
     }
 
-    return new Set<T>(definedCells)
+    return new Set<T>(definedCells.flatMap((items: T[]) => items))
   }
 
   /**
@@ -235,7 +240,6 @@ export class Grid<T> {
    *
    * @param {T} item
    * @param {Point} point = the desired coordinates
-   * @throws {Error} if there is already an item at the requested location
    * @throws {Error} if the new item would be placed out of bounds
    */
   putItem(item: T, point: Point) {
@@ -244,12 +248,15 @@ export class Grid<T> {
     }
 
     const cellNum = this.getColumnCount() * point.y + point.x + 1
-    if (this.#cells.get(cellNum) !== undefined) {
-      throw new Error(kleur.red(`There is already an item located at ${point !== undefined ? JSON.stringify(point) : `cell number ${cellNum}`}`))
+    let items: T[] = [item]
+
+    const exitingCell = this.#cells.get(cellNum)
+    if (exitingCell !== undefined) {
+      items = [...items, ...exitingCell.items]
     }
 
     this.#cells.set(cellNum, {
-      item,
+      items,
       point,
       neighbors: new Map<NeighborLocation, number | undefined>(),
     })
@@ -274,7 +281,7 @@ export class Grid<T> {
    * @returns {[number, Cell<T>][]} an array of grid cell key/value pairs
    */
   #findCells(item: T): [number, Cell<T>][] {
-    return [...this.#cells.entries()].filter((entry: [number, Cell<T>]) => entry[1].item === item)
+    return [...this.#cells.entries()].filter((entry: [number, Cell<T>]) => entry[1].items.includes(item))
   }
 
   /**
@@ -319,12 +326,20 @@ export class Grid<T> {
 
     neighborhoodMap.forEach((neighborKey: number | undefined, location: NeighborLocation) => {
       if (neighborKey !== undefined) {
-        const neighborItem = this.#cells.get(neighborKey)?.item
+        const neighborItems = this.#cells.get(neighborKey)?.items
 
-        if (neighborItem === undefined || neighborItem !== cell.item) {
+        if (neighborItems === undefined || neighborItems.length === 0) {
           cell.neighbors.set(location, undefined)
         } else {
-          if (!visited.has(neighborKey)) {
+          let neighborFound = false
+          for (const item of neighborItems) {
+            neighborFound = cell.items.includes(item)
+            if (neighborFound) {
+              break
+            }
+          }
+
+          if (neighborFound && !visited.has(neighborKey)) {
             matchingNeighbors.set(location, neighborKey)
           }
         }
@@ -468,15 +483,32 @@ export class Grid<T> {
       let row = this.getRow(rowNum)
 
       if (args?.filter !== undefined) {
-        row = row.map((item: T | undefined) => (item !== undefined && args.filter?.includes(item) ? item : undefined))
+        row = row.map((items: T[]) => {
+          let itemFound = false
+          for (const item of items) {
+            itemFound = args.filter !== undefined && args.filter.includes(item)
+            if (itemFound) {
+              break
+            }
+          }
+          return itemFound ? items : []
+        })
       }
 
-      let rowString = row.map((item: T | undefined) => (item !== undefined ? (args?.replacer === undefined ? item : args.replacer) : '.')).join('')
+      let newRow = []
+      if (args?.replacer !== undefined) {
+        if (args.replacer === '\\d') {
+          newRow = row.map((items: T[]) => (items.length > 0 ? items.length.toFixed() : '.'))
+        } else {
+          newRow = row.map((items: T[]) => (items.length > 0 ? args.replacer : '.'))
+        }
+      } else {
+        newRow = row.map((items: T[]) => (items.length > 0 ? items.join('') : '.'))
+      }
 
-      if (rowString === '') {
-        rowString = '.'.repeat(numCols)
-      } else if (rowString.length < numCols) {
-        rowString = `${rowString}${'.'.repeat(numCols - rowString.length)}`
+      let rowString = ''
+      for (let index = 0; index <= numCols; ++index) {
+        rowString += newRow[index] ?? '.'
       }
 
       outputString += `${rowString}\n`
