@@ -1,4 +1,4 @@
-import { Point } from 'utils/dataTypes/interfaces.js'
+import { Point } from 'utils/dataTypes/index.js'
 
 export interface IBounds {
   min?: Point
@@ -100,6 +100,14 @@ export class Bounds {
 
   isInside(point: Point): boolean {
     return this.#isGreaterOrEqualToMin(point) && this.#isLesserOrEqualToMax(point)
+  }
+
+  isInsideX(point: Point): boolean {
+    return this.#max.x >= point.x
+  }
+
+  isInsideY(point: Point): boolean {
+    return this.#max.y >= point.y
   }
 
   //#endregion

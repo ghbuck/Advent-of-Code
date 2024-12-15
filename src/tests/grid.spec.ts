@@ -1,15 +1,16 @@
 import { beforeEach, describe, expect, test } from '@jest/globals'
 import { Grid, IGrid } from 'utils/models/Grid.js'
 import { testStringGrid } from './testData/grid.js'
+import { Point } from 'utils/dataTypes/index.js'
 
 describe('Grid model tests', () => {
-  let grid: Grid<string> | undefined
   const constructorArgs: IGrid<string> = {
     input: testStringGrid,
     splitter1: '\n',
     splitter2: '',
     typeConstructor: String,
   }
+  let grid: Grid<string> | undefined
 
   const testArray = testStringGrid.split('\n').map((row: string) => row.split(''))
 
@@ -18,6 +19,10 @@ describe('Grid model tests', () => {
 
   const randomRowIndex = Math.floor(Math.random() * (numTestRows + 1))
   const randomColIndex = Math.floor(Math.random() * (numTestCols + 1))
+  const randomPoint: Point = {
+    x: randomColIndex,
+    y: randomRowIndex,
+  }
 
   const testItem = testArray[randomRowIndex][randomColIndex]
 
@@ -59,39 +64,61 @@ describe('Grid model tests', () => {
 
   describe('Data tests', () => {
     beforeEach(() => {
-      if (grid === undefined) {
-        grid = new Grid<string>(constructorArgs)
-      }
+      grid = new Grid<string>(constructorArgs)
     })
 
-    test('getRow(\\d) returns the same values an array[\\d][y] lookup', () => {
-      if (grid !== undefined) {
+    describe('Get method tests', () => {
+      test('getRow(\\d) returns the same values an array[\\d][x] lookup', () => {
+        if (grid === undefined) throw new Error('Test grid is undefined')
+
         for (const [index, row] of testArray.entries()) {
           const gridRow = index + 1
           expect(grid.getRow(gridRow)).toEqual(row)
         }
-      }
-    })
+      })
 
-    test('getColumn(\\d) returns the same values an array[x][\\d] lookup', () => {
-      if (grid !== undefined) {
+      test('getColumn(\\d) returns the same values an array[y][\\d] lookup', () => {
+        if (grid === undefined) throw new Error('Test grid is undefined')
+
         for (let colIndex = 0; colIndex < numTestCols; ++colIndex) {
           const col = testArray.map((row: string[]) => row[colIndex])
           const gridCol = colIndex + 1
           expect(grid.getColumn(gridCol)).toEqual(col)
         }
-      }
-    })
+      })
 
-    test('getItem(y, x) returns the same value as array[y][x] lookup', () => {
-      if (grid !== undefined) {
-        const gridItem = grid.getItem(randomRowIndex + 1, randomColIndex + 1)
+      test('getItem() returns the same value as array[y][x] lookup', () => {
+        if (grid === undefined) throw new Error('Test grid is undefined')
+
+        const gridItem = grid.getItem(randomPoint)
         expect(gridItem).toEqual(testItem)
-      }
+      })
     })
 
-    test('findPoints(item) returns same points as finding with an array loop', () => {
-      if (grid !== undefined) {
+    describe('Put and delete method tests', () => {
+      test('deleteItemAtPoint() correctly removes a cell item', () => {
+        if (grid === undefined) throw new Error('Test grid is undefined')
+
+        grid.deleteItem(randomPoint)
+        expect(grid.getItem(randomPoint)).toBeUndefined()
+      })
+
+      test('putItem() successfully inserts an item', () => {
+        if (grid === undefined) throw new Error('Test grid is undefined')
+
+        grid.deleteItem(randomPoint)
+
+        const newItem = '👋'
+        grid.putItem(newItem, randomPoint)
+
+        expect(grid.getItem(randomPoint)).toEqual(newItem)
+      })
+    })
+
+    describe('Find method tests', () => {
+      test('findPoints(item) returns same points as finding with an array loop', () => {
+        if (grid === undefined) throw new Error('Test grid is undefined')
+
         const arrayTuples: [number, number][] = []
         const gridTuples: [number, number][] = []
 
@@ -110,7 +137,7 @@ describe('Grid model tests', () => {
 
         expect(gridTuples.length).toEqual(arrayTuples.length)
         expect(gridTuples.join()).toEqual(arrayTuples.join())
-      }
+      })
     })
   })
 })

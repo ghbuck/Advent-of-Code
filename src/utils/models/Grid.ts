@@ -1,6 +1,6 @@
 import kleur from 'kleur'
 import { Point } from 'utils/dataTypes/index.js'
-import { Bounds } from 'utils/models/Bounds.js'
+import { Bounds, IBounds } from 'utils/models/Bounds.js'
 
 export interface IGrid<T> {
   input: string
@@ -9,10 +9,16 @@ export interface IGrid<T> {
   typeConstructor: () => T
 }
 
+export interface DrawGridParams<T> {
+  filter?: T[]
+  replacer?: string
+}
+
 export interface RegionInfo {
   cellNumbers: number[]
   area: number
   perimeter: number
+  sides: number
 }
 
 export interface RegionResponse<T> {
@@ -20,21 +26,20 @@ export interface RegionResponse<T> {
   regions: RegionInfo[]
 }
 
+type NeighborLocation = 'above' | 'below' | 'left' | 'right'
+type NeighborhoodMap = Map<NeighborLocation, number | undefined>
+
 interface Cell<T> {
   item: T | undefined
   point: Point
-}
-
-interface NeighborKeys {
-  above: number | undefined
-  below: number | undefined
-  left: number | undefined
-  right: number | undefined
+  neighbors: NeighborhoodMap
 }
 
 export class Grid<T> {
   #cells: Map<number, Cell<T>>
   #bounds: Bounds
+
+  //#region Constructors
 
   constructor(args?: IGrid<T>) {
     this.#cells = new Map<number, Cell<T>>()
@@ -67,15 +72,31 @@ export class Grid<T> {
     for (let rowIndex = 0; rowIndex <= this.#bounds.getMaxY(); ++rowIndex) {
       for (let colIndex = 0; colIndex <= this.#bounds.getMaxX(); ++colIndex) {
         this.#cells.set(++counter, {
-          item: inputArray[rowIndex]?.[colIndex],
+          item: inputArray[rowIndex][colIndex],
           point: {
             x: colIndex,
             y: rowIndex,
           },
+          neighbors: new Map<NeighborLocation, number>(),
         })
       }
     }
   }
+
+  /**
+   * If you've instantiated the grid without input and only want to size the grid you may call this method.
+   *
+   * **!Warning¡** this is a destructive procedure if you already have cells in this grid
+   *
+   * @param {IBounds} newBounds - the bounds of the
+   */
+  setBounds(newBounds: IBounds) {
+    this.#cells.clear()
+    this.#bounds.clear()
+    this.#bounds.put(newBounds.max)
+  }
+
+  //#endregion
 
   //#region Row methods
 
@@ -124,12 +145,13 @@ export class Grid<T> {
 
     let counter = this.#cells.size
     for (let colIndex = 0; colIndex <= this.#bounds.getMaxX(); ++colIndex) {
-      this.#cells.set(++counter, {
+      this.#cells.set(counter++, {
         item: items?.[colIndex],
         point: {
           x: colIndex,
           y: this.#bounds.getMaxY(),
         },
+        neighbors: new Map<NeighborLocation, number>(),
       })
     }
   }
@@ -184,12 +206,11 @@ export class Grid<T> {
 
   /**
    *
-   * @param {number} rowNum - the grid `y` value
-   * @param {number} colNum - the grid `x` value
+   * @param {Point} point - the coordinates to retrieve
    * @returns {T | undefined} the item, if it exists, otherwise `undefined`
    */
-  getItem(rowNum: number, colNum: number): T | undefined {
-    return [...this.#cells.values()].filter((cell: Cell<T>) => cell.point.x === colNum - 1 && cell.point.y === rowNum - 1).map((cell: Cell<T>) => cell.item)[0]
+  getItem(point: Point): T | undefined {
+    return [...this.#cells.values()].filter((cell: Cell<T>) => cell.point.x === point.x && cell.point.y === point.y).map((cell: Cell<T>) => cell.item)[0]
   }
 
   /**
@@ -209,6 +230,39 @@ export class Grid<T> {
     return new Set<T>(definedCells)
   }
 
+  /**
+   * Puts an item on the grid.
+   *
+   * @param {T} item
+   * @param {Point} point = the desired coordinates
+   * @throws {Error} if there is already an item at the requested location
+   * @throws {Error} if the new item would be placed out of bounds
+   */
+  putItem(item: T, point: Point) {
+    if (!this.#bounds.isInside(point)) {
+      throw new Error(kleur.red(`The requested point, ${JSON.stringify(point)}, is outside the bounds of the grid, ${JSON.stringify(this.#bounds.getMax())}.`))
+    }
+
+    const cellNum = this.getColumnCount() * point.y + point.x + 1
+    if (this.#cells.get(cellNum) !== undefined) {
+      throw new Error(kleur.red(`There is already an item located at ${point !== undefined ? JSON.stringify(point) : `cell number ${cellNum}`}`))
+    }
+
+    this.#cells.set(cellNum, {
+      item,
+      point,
+      neighbors: new Map<NeighborLocation, number | undefined>(),
+    })
+  }
+
+  /**
+   *
+   */
+  deleteItem(point: Point) {
+    const cellNum = [...this.#cells.entries()].filter((entry: [number, Cell<T>]) => entry[1].point.x === point.x && entry[1].point.y === point.y).map((entry: [number, Cell<T>]) => entry[0])[0]
+    this.#cells.delete(cellNum)
+  }
+
   //#endregion
 
   //#region Find methods
@@ -224,43 +278,158 @@ export class Grid<T> {
   }
 
   /**
+   * a private method used to get the keys for adjacent cells in the grid
    *
-   * @param {[number, Cell<T>]} cell - a key/value pair from the grid map
-   * @param neighborhoodWatch - a cheeky name for all previously found neighbors
-   * @returns
+   * @param {number} cellKey
+   * @returns {NeighborhoodMap} a map of <NeighborLocation, neighbor cell key>
    */
-  async #findNeighbors(cell: [number, Cell<T>], neighborhoodWatch?: Set<number>): Promise<Set<number>> {
+  #mapTheNeighborhood(cellKey: number): NeighborhoodMap {
     const colCount = this.#bounds.getMaxX() + 1
 
-    const neighborKeys: NeighborKeys = {
-      above: cell[0] - colCount > 1 ? cell[0] - colCount : undefined,
-      below: cell[0] + colCount > 1 ? cell[0] + colCount : undefined,
-      left: !Number.isInteger((cell[0] - 1) / colCount) ? cell[0] - 1 : undefined,
-      right: !Number.isInteger(cell[0] / colCount) ? cell[0] + 1 : undefined,
+    const neighborhoodMap: NeighborhoodMap = new Map<NeighborLocation, number>()
+    if (cellKey - colCount > 0) {
+      neighborhoodMap.set('above', cellKey - colCount)
+    }
+    if (cellKey + colCount <= this.#cells.size) {
+      neighborhoodMap.set('below', cellKey + colCount)
+    }
+    if (!Number.isInteger((cellKey - 1) / colCount)) {
+      neighborhoodMap.set('left', cellKey - 1)
+    }
+    if (!Number.isInteger(cellKey / colCount)) {
+      neighborhoodMap.set('right', cellKey + 1)
     }
 
-    const neighborhood = neighborhoodWatch !== undefined ? neighborhoodWatch : new Set<number>()
-    neighborhood.add(cell[0])
+    const cell = this.#cells.get(cellKey)
+    if (cell !== undefined) {
+      cell.neighbors = neighborhoodMap
+    }
 
-    for (const neighborKey of Object.values(neighborKeys).map(Number)) {
-      if (neighborKey !== undefined && !neighborhood.has(neighborKey)) {
-        const neighbor = this.#cells.get(neighborKey)
+    return neighborhoodMap
+  }
 
-        const addNeighbor = neighbor !== undefined && neighbor.item === cell[1].item && !neighborhood.has(neighborKey)
+  /**
+   *
+   * @param {number} cell - the home cell
+   * @param {NeighborhoodMap} neighborhoodMap - the map of its neighbors
+   * @returns {NeighborhoodMap} a filtered copy of `neighborhoodMap`
+   */
+  #filterTheNeighborhood(cell: Cell<T>, neighborhoodMap: NeighborhoodMap, visited: Set<number>): NeighborhoodMap {
+    const matchingNeighbors: NeighborhoodMap = new Map<NeighborLocation, number>()
 
-        if (addNeighbor) {
-          neighborhood.add(neighborKey)
+    neighborhoodMap.forEach((neighborKey: number | undefined, location: NeighborLocation) => {
+      if (neighborKey !== undefined) {
+        const neighborItem = this.#cells.get(neighborKey)?.item
 
-          const nextDoorNeighbors = await this.#findNeighbors([neighborKey, neighbor], neighborhood)
-
-          for (const newNeighbor of nextDoorNeighbors) {
-            neighborhood.add(newNeighbor)
+        if (neighborItem === undefined || neighborItem !== cell.item) {
+          cell.neighbors.set(location, undefined)
+        } else {
+          if (!visited.has(neighborKey)) {
+            matchingNeighbors.set(location, neighborKey)
           }
         }
       }
+    })
+
+    return matchingNeighbors
+  }
+
+  /**
+   *
+   * @param {[number, Cell<T>]} cell - a key/value pair from the grid map
+   * @param visited - a cheeky name for all previously found neighbors
+   * @returns
+   */
+  async #findMatchingNeighbors([cellKey, cell]: [number, Cell<T>], visited?: Set<number>): Promise<Set<number>> {
+    const localVisited = visited !== undefined ? visited : new Set<number>()
+    localVisited.add(cellKey)
+
+    const theMap = this.#mapTheNeighborhood(cellKey)
+    const matchingNeighbors = this.#filterTheNeighborhood(cell, theMap, localVisited)
+
+    return Promise.all(
+      [...matchingNeighbors.values()].map((neighborKey: number | undefined) => {
+        if (neighborKey !== undefined) {
+          const neighbor = this.#cells.get(neighborKey)
+          if (neighbor !== undefined) {
+            localVisited.add(neighborKey)
+            return this.#findMatchingNeighbors([neighborKey, neighbor], localVisited)
+          }
+        }
+      }),
+    ).then((newNeighborMaps: (Set<number> | undefined)[]) => {
+      for (const newNeighborMap of newNeighborMaps) {
+        if (newNeighborMap !== undefined) {
+          for (const newNeighbor of newNeighborMap) {
+            localVisited.add(newNeighbor)
+          }
+        }
+      }
+
+      return localVisited
+    })
+  }
+
+  /**
+   * Checks a cell and its neighbors to see if we have found a new side
+   *
+   * @param {Cell<T>} checkCell
+   */
+  #checkForNewSides(checkCell: Cell<T>): number {
+    // garbage just to quiet eslint
+    const test = checkCell.point.x
+    return test
+  }
+
+  #calculateRegionInfo(cells: Set<number>): RegionInfo {
+    let perimeter = 0
+    let sides = 0
+
+    const sortedCells = [...cells].sort((a, b) => a - b)
+
+    for (const cellKey of sortedCells) {
+      const cell = this.#cells.get(cellKey)
+
+      if (cell !== undefined) {
+        const definedNeighbors = [...cell.neighbors.entries()].filter((entry: [NeighborLocation, number | undefined]) => entry[1] !== undefined)
+        const exposedEdges = 4 - definedNeighbors.length
+
+        perimeter += exposedEdges
+        sides += this.#checkForNewSides(cell)
+      }
     }
 
-    return neighborhood
+    return {
+      cellNumbers: sortedCells,
+      area: sortedCells.length,
+      perimeter,
+      sides,
+    }
+  }
+
+  /**
+   * @param {T} item - an item potentially in the grid
+   * @returns the coordinates of the all matching grid items
+   */
+  async findRegions(item: T): Promise<RegionResponse<T>> {
+    let cells = this.#findCells(item)
+    const regions: RegionInfo[] = []
+
+    while (cells.length > 0) {
+      const firstCell = cells[0]
+
+      const regionCells = await this.#findMatchingNeighbors(firstCell)
+      const regionInfo = this.#calculateRegionInfo(regionCells)
+
+      regions.push(regionInfo)
+
+      cells = cells.filter((entry: [number, Cell<T>]) => !regionCells.has(entry[0]))
+    }
+
+    return {
+      item,
+      regions,
+    }
   }
 
   /**
@@ -279,54 +448,36 @@ export class Grid<T> {
     return this.findPoints(item)[0]
   }
 
-  /**
-   * @param {T} item - an item potentially in the grid
-   * @returns the coordinates of the all matching grid items
-   */
-  async findRegions(item: T): Promise<RegionResponse<T>> {
-    let cells = this.#findCells(item)
-    const regions: RegionInfo[] = []
-
-    while (cells.length > 0) {
-      const firstCell = cells[0]
-      const neighbors = await this.#findNeighbors(firstCell)
-
-      regions.push({
-        cellNumbers: [...neighbors].sort(),
-        area: 0,
-        perimeter: 0,
-      })
-
-      cells = cells.filter((entry: [number, Cell<T>]) => !neighbors.has(entry[0]))
-    }
-
-    return {
-      item,
-      regions,
-    }
-  }
-
   //#endregion
 
-  //#region convenience methods
+  //#region Utility methods
 
   /**
-   * a convenience method to easily visualize a whole grid during development.
-   * pass in a filter array to only show items you want to see.
+   * A utility method to easily visualize a whole grid during development.
    *
-   * @param {T[]} itemFilter - used to only print items in the array. other values are replaced with '.'
+   * Pass in the `args` object to only show items you want to see.
+   *
+   * @param {DrawGridParams} args - used to manipulate the output drawing
    */
-  drawGrid(itemFilter?: T[]) {
+  drawGrid(args?: DrawGridParams<T>) {
     const numRows = this.getRowCount()
+    const numCols = this.getColumnCount()
 
     let outputString = '\n'
     for (let rowNum = 1; rowNum <= numRows; ++rowNum) {
       let row = this.getRow(rowNum)
-      if (itemFilter !== undefined) {
-        row = row.map((item: T | undefined) => (item !== undefined && itemFilter.includes(item) ? item : undefined))
+
+      if (args?.filter !== undefined) {
+        row = row.map((item: T | undefined) => (item !== undefined && args.filter?.includes(item) ? item : undefined))
       }
 
-      const rowString = row.map((item: T | undefined) => (item !== undefined ? item : '.')).join('')
+      let rowString = row.map((item: T | undefined) => (item !== undefined ? (args?.replacer === undefined ? item : args.replacer) : '.')).join('')
+
+      if (rowString === '') {
+        rowString = '.'.repeat(numCols)
+      } else if (rowString.length < numCols) {
+        rowString = `${rowString}${'.'.repeat(numCols - rowString.length)}`
+      }
 
       outputString += `${rowString}\n`
     }
