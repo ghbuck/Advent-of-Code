@@ -103,11 +103,11 @@ export class Bounds {
   }
 
   isInsideX(point: Point): boolean {
-    return this.#max.x >= point.x
+    return point.x >= 0 && this.#max.x >= point.x
   }
 
   isInsideY(point: Point): boolean {
-    return this.#max.y >= point.y
+    return point.y >= 0 && this.#max.y >= point.y
   }
 
   //#endregion

@@ -97,17 +97,29 @@ describe('Grid model tests', () => {
     })
 
     describe('Put and delete method tests', () => {
-      test('deleteItemAtPoint() correctly removes a cell item', () => {
+      test('deleteItems(point) correctly removes a cell item', () => {
         if (grid === undefined) throw new Error('Test grid is undefined')
 
-        grid.deleteItem(randomPoint)
+        grid.deleteItems(randomPoint)
         expect(grid.getCellItems(randomPoint)).toBeUndefined()
       })
 
-      test('putItem() successfully inserts an item', () => {
+      test('deleteItem(item, point) correctly removes a cell item', () => {
         if (grid === undefined) throw new Error('Test grid is undefined')
 
-        grid.deleteItem(randomPoint)
+        const newItem = '👋'
+
+        grid.putItem(newItem, randomPoint)
+        grid.deleteItem(testItem, randomPoint)
+
+        const gridItem = grid.getCellItems(randomPoint)
+        expect(gridItem?.join('')).toEqual(newItem)
+      })
+
+      test('putItem(point) successfully inserts an item', () => {
+        if (grid === undefined) throw new Error('Test grid is undefined')
+
+        grid.deleteItems(randomPoint)
 
         const newItem = '👋'
         grid.putItem(newItem, randomPoint)

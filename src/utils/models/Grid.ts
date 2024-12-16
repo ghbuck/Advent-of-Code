@@ -83,6 +83,14 @@ export class Grid<T> {
     }
   }
 
+  //#endregion
+
+  //#region Bounds methds
+
+  getBounds(): Bounds {
+    return this.#bounds
+  }
+
   /**
    * If you've instantiated the grid without input and only want to size the grid you may call this method.
    *
@@ -221,18 +229,27 @@ export class Grid<T> {
   /**
    * a useful method for when you need to do things with
    *
-   * @returns a set of unique grid items
+   * @returns an array of all grid items
    */
-  getUniqueItems(): Set<T> {
+  getAllItems(): T[] {
     const definedCells: T[][] = []
 
     for (const cell of this.#cells.values()) {
-      if (cell.items !== undefined) {
+      if (cell.items.length > 0) {
         definedCells.push(cell.items)
       }
     }
 
-    return new Set<T>(definedCells.flatMap((items: T[]) => items))
+    return definedCells.flatMap((items: T[]) => items)
+  }
+
+  /**
+   * a useful method for when you need to do things with
+   *
+   * @returns a set of unique grid items
+   */
+  getUniqueItems(): Set<T> {
+    return new Set<T>(this.getAllItems())
   }
 
   /**
@@ -265,7 +282,22 @@ export class Grid<T> {
   /**
    *
    */
-  deleteItem(point: Point) {
+  deleteItem(item: T, point: Point) {
+    const cellNum = [...this.#cells.entries()].filter((entry: [number, Cell<T>]) => entry[1].point.x === point.x && entry[1].point.y === point.y).map((entry: [number, Cell<T>]) => entry[0])[0]
+    const cell = this.#cells.get(cellNum)
+
+    if (cell !== undefined) {
+      const itemIndex = cell.items.findIndex((cellItem: T) => cellItem === item)
+      if (itemIndex !== -1) {
+        cell.items.splice(itemIndex, 1)
+      }
+    }
+  }
+
+  /**
+   *
+   */
+  deleteItems(point: Point) {
     const cellNum = [...this.#cells.entries()].filter((entry: [number, Cell<T>]) => entry[1].point.x === point.x && entry[1].point.y === point.y).map((entry: [number, Cell<T>]) => entry[0])[0]
     this.#cells.delete(cellNum)
   }
@@ -473,10 +505,10 @@ export class Grid<T> {
    * Pass in the `args` object to only show items you want to see.
    *
    * @param {DrawGridParams} args - used to manipulate the output drawing
+   * @returns {string} if you would like to manipulate the string for some reason
    */
-  drawGrid(args?: DrawGridParams<T>) {
+  drawGrid(args?: DrawGridParams<T>): string {
     const numRows = this.getRowCount()
-    const numCols = this.getColumnCount()
 
     let outputString = '\n'
     for (let rowNum = 1; rowNum <= numRows; ++rowNum) {
@@ -507,7 +539,7 @@ export class Grid<T> {
       }
 
       let rowString = ''
-      for (let index = 0; index <= numCols; ++index) {
+      for (let index = 0; index <= this.#bounds.getMaxX(); ++index) {
         rowString += newRow[index] ?? '.'
       }
 
@@ -515,6 +547,28 @@ export class Grid<T> {
     }
 
     console.log(outputString)
+
+    return outputString
+  }
+
+  /**
+   * I've decided to use the Manhattan distance here. God, I love learning math during AoC!
+   *
+   * @param distance the comparator, below which we consider items sufficiently clustered
+   * @returns
+   */
+  clusteredWithinDistance(distance: number): boolean {
+    let totalDistance = 0
+    let comparisons = 0
+
+    for (const cell1 of this.#cells.values()) {
+      for (const cell2 of this.#cells.values()) {
+        totalDistance += Math.abs(cell2.point.x - cell1.point.x) + Math.abs(cell2.point.y - cell1.point.y)
+        ++comparisons
+      }
+    }
+
+    return totalDistance / comparisons <= distance
   }
 
   //#endregion
