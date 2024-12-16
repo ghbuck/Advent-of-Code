@@ -28,7 +28,9 @@
   },
   "dependencies": {
     "@inquirer/select": "^4.0.3",
+    "ansi-escapes": "^7.0.0",
     "kleur": "^4.1.5",
+    "lodash.isequal": "^4.5.0",
     "mac-ca": "^3.1.0",
     "perf_hooks": "^0.0.1"
   },
