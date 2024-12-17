@@ -1,3 +1,4 @@
+import { clearScreen } from 'ansi-escapes'
 import kleur from 'kleur'
 import { Point } from 'utils/dataTypes/index.js'
 import { Bounds, IBounds } from 'utils/models/Bounds.js'
@@ -12,6 +13,8 @@ export interface IGrid<T> {
 export interface DrawGridParams<T> {
   filter?: T[]
   replacer?: string
+  onlyTopItem?: boolean
+  animationTimeout?: number
 }
 
 export interface RegionInfo {
@@ -26,8 +29,10 @@ export interface RegionResponse<T> {
   regions: RegionInfo[]
 }
 
-type NeighborLocation = 'above' | 'below' | 'left' | 'right'
-type NeighborhoodMap = Map<NeighborLocation, number | undefined>
+export type NeighborLocation = 'above' | 'below' | 'left' | 'right'
+export type NeighborhoodMap = Map<NeighborLocation, number | undefined>
+
+export type ShiftDirection = NeighborLocation
 
 interface Cell<T> {
   items: T[]
@@ -217,6 +222,10 @@ export class Grid<T> {
 
   //#region Cell methods
 
+  getCellKey(point: Point): number | undefined {
+    return [...this.#cells.entries()].filter((entry: [number, Cell<T>]) => entry[1].point.x === point.x && entry[1].point.y === point.y).map((entry: [number, Cell<T>]) => entry[0])[0]
+  }
+
   /**
    *
    * @param {Point} point - the coordinates to retrieve
@@ -224,6 +233,13 @@ export class Grid<T> {
    */
   getCellItems(point: Point): T[] | undefined {
     return [...this.#cells.values()].filter((cell: Cell<T>) => cell.point.x === point.x && cell.point.y === point.y).map((cell: Cell<T>) => cell.items)[0]
+  }
+
+  getCellItemsByKey(cellKey: number): T[] | undefined {
+    return [...this.#cells.entries()]
+      .filter((entry: [number, Cell<T>]) => entry[0] === cellKey)
+      .map((entry: [number, Cell<T>]) => entry[1].items)
+      .flat()
   }
 
   /**
@@ -302,6 +318,12 @@ export class Grid<T> {
     this.#cells.delete(cellNum)
   }
 
+  // shiftItemsByCellKey(startKey: number, numCells: number, deltaValue: number, shiftValue: number) {
+  //   const endKey = startKey + (numCells * deltaValue)
+  //   const cells: [number, Cell<T>] = [...this.#cells.entries()].slice(Math.m)
+
+  // }
+
   //#endregion
 
   //#region Find methods
@@ -317,12 +339,12 @@ export class Grid<T> {
   }
 
   /**
-   * a private method used to get the keys for adjacent cells in the grid
+   * a method used to get the keys for adjacent cells in the grid
    *
    * @param {number} cellKey
    * @returns {NeighborhoodMap} a map of <NeighborLocation, neighbor cell key>
    */
-  #mapTheNeighborhood(cellKey: number): NeighborhoodMap {
+  mapTheNeighborhood(cellKey: number): NeighborhoodMap {
     const colCount = this.#bounds.getMaxX() + 1
 
     const neighborhoodMap: NeighborhoodMap = new Map<NeighborLocation, number>()
@@ -391,7 +413,7 @@ export class Grid<T> {
     const localVisited = visited !== undefined ? visited : new Set<number>()
     localVisited.add(cellKey)
 
-    const theMap = this.#mapTheNeighborhood(cellKey)
+    const theMap = this.mapTheNeighborhood(cellKey)
     const matchingNeighbors = this.#filterTheNeighborhood(cell, theMap, localVisited)
 
     return Promise.all(
@@ -527,26 +549,38 @@ export class Grid<T> {
         })
       }
 
-      let newRow = []
+      let newRow: string[] = []
       if (args?.replacer !== undefined) {
         if (args.replacer === '\\d') {
           newRow = row.map((items: T[]) => (items.length > 0 ? items.length.toFixed() : '.'))
         } else {
-          newRow = row.map((items: T[]) => (items.length > 0 ? args.replacer : '.'))
+          newRow = row.map((items: T[]) => (items.length > 0 && args.replacer !== undefined ? args.replacer : '.'))
         }
       } else {
-        newRow = row.map((items: T[]) => (items.length > 0 ? items.join('') : '.'))
+        if (args?.onlyTopItem) {
+          newRow = row.map((items: T[]) => (items.length > 0 ? items[0] + '' : '.'))
+        } else {
+          newRow = row.map((items: T[]) => (items.length > 1 ? `[${items.join(',')}]` : items.length === 1 ? items[0] + '' : '.'))
+        }
       }
 
       let rowString = ''
       for (let index = 0; index <= this.#bounds.getMaxX(); ++index) {
-        rowString += newRow[index] ?? '.'
+        rowString = `${rowString}${newRow[index] ?? '.'}`
       }
 
       outputString += `${rowString}\n`
     }
 
-    console.log(outputString)
+    process.stdout.write(clearScreen + kleur.cyan(outputString))
+
+    if (args?.animationTimeout !== undefined) {
+      const start = Date.now()
+      let now = start
+      while (now - start < args.animationTimeout) {
+        now = Date.now()
+      }
+    }
 
     return outputString
   }
