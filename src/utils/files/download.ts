@@ -65,7 +65,10 @@ export const downloadExample = async ({ day, year }: RunParams): Promise<string>
         exampleChoices.push({
           name: String(index + 1),
           value: index,
-          description: codeBlocks[index].replace(/<\/?[a-z]+?>/g, ''),
+          description: codeBlocks[index]
+            .replace(/<\/?[a-z]+?>/g, '')
+            .replaceAll('&lt;', '<')
+            .replaceAll('&gt;', '>'),
           isBestGuess: htmlSplitAtPre[index - 1]?.includes('your puzzle input'),
         })
       }
