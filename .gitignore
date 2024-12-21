@@ -1,6 +1,7 @@
 # to follow AoC guideline requests, do not commit input data
 input/*
 
+playground.ts
 .DS_Store
 
 # Logs
