@@ -9,6 +9,10 @@ export const isBetween = (mainValue: number, val1: number, val2: number, inclusi
   }
 }
 
+export const isBetweenInclusive = (mainValue: number, val1: number, val2: number): boolean => {
+  return isBetween(mainValue, val1, val2, true)
+}
+
 export const getIntersection = <T>(set1: Set<T>, set2: Set<T>): Set<T> => {
   const intersection = new Set<T>()
 
