@@ -14,14 +14,14 @@ export interface Day {
 }
 
 export interface Solution {
-  part1: number | undefined
-  part2: number | undefined
+  part1: number | string | undefined
+  part2: number | string | undefined
 }
 
 export interface AnswerParams {
   params: RunParams
-  answer1: number | undefined
-  answer2: number | undefined
+  answer1: number | string | undefined
+  answer2: number | string | undefined
   solution: Solution
 }
 
