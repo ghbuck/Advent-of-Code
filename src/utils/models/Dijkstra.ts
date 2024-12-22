@@ -1,11 +1,11 @@
 import { clearScreen } from 'ansi-escapes'
 import kleur from 'kleur'
 import isEqual from 'lodash.isequal'
-import { cardinalDirections, Point, tokenDirections } from 'utils/dataTypes/index.js'
+import { CardinalDirection, cardinalDirections, Point, tokenDirections } from 'utils/dataTypes/index.js'
 import { isBetweenInclusive } from 'utils/maths/comparisons.js'
 import { PriorityQueue } from 'utils/models/PriorityQueue.js'
 
-interface DijkstraNode {
+export interface DijkstraNode {
   position: Point
   cost: number
   direction?: Point
@@ -15,14 +15,16 @@ export interface DijkstraParams<T> {
   grid: T[][]
   startNode: Omit<DijkstraNode, 'cost'>
   goal: Point
-  turnCost: number
-  freeSpace: T
+  turnCost?: number
+  turnCostCalculator?: (dirKey: CardinalDirection) => number
+  freeSpace?: T
+  blockedSpace?: T
   endChar?: T
   doAnimation?: boolean
 }
 
 export interface DijkstraResults {
-  path: Point[]
+  path: DijkstraNode[]
   cost: number
 }
 
@@ -30,7 +32,7 @@ const getKey = (p: Point, dir?: Point) => {
   return dir ? `${p.x},${p.y},${dir.x},${dir.y}` : `${p.x},${p.y}`
 }
 
-export const runDijkstra = <T>({ grid, startNode, goal, turnCost, freeSpace, endChar, doAnimation }: DijkstraParams<T>): DijkstraResults[] => {
+export const runDijkstra = <T>({ grid, startNode, goal, turnCost = 0, turnCostCalculator, freeSpace, blockedSpace, endChar, doAnimation }: DijkstraParams<T>): DijkstraResults[] => {
   const results: DijkstraResults[] = []
 
   const maxRowIndex = grid.length - 1
@@ -69,9 +71,15 @@ export const runDijkstra = <T>({ grid, startNode, goal, turnCost, freeSpace, end
 
       if (!isBetweenInclusive(newPosition.x, 0, maxColIndex) || !isBetweenInclusive(newPosition.y, 0, maxRowIndex)) continue
 
-      if (grid[newPosition.y][newPosition.x] === freeSpace || grid[newPosition.y][newPosition.x] === endChar) {
+      const isEndSpace = endChar !== undefined && grid[newPosition.y][newPosition.x] === endChar
+      const isBlockedSpace = blockedSpace !== undefined && grid[newPosition.y][newPosition.x] === blockedSpace
+      const isFreeSpace = !isBlockedSpace && (freeSpace === undefined || grid[newPosition.y][newPosition.x] === freeSpace)
+
+      if (isEndSpace || isFreeSpace) {
         const isTurn = current.direction && (current.direction.x !== direction.x || current.direction.y !== direction.y)
-        const moveCost = 1 + (isTurn ? turnCost : 0)
+        const extraCost = isTurn ? (turnCostCalculator !== undefined ? turnCostCalculator(dirKey) : turnCost) : 0
+
+        const moveCost = 1 + extraCost
         const newCost = current.cost + moveCost
 
         const newKey = getKey(newPosition, direction)
@@ -98,18 +106,19 @@ export const runDijkstra = <T>({ grid, startNode, goal, turnCost, freeSpace, end
   return results
 }
 
-function reconstructPath(goal: DijkstraNode, parentMap: Map<string, DijkstraNode>): Point[] {
-  const path: Point[] = []
+function reconstructPath(goal: DijkstraNode, parentMap: Map<string, DijkstraNode>): DijkstraNode[] {
+  const path: DijkstraNode[] = []
+  path.push(goal)
+
   let currentKey = getKey(goal.position, goal.direction)
 
   while (parentMap.has(currentKey)) {
     const current = parentMap.get(currentKey)
     if (current !== undefined) {
-      path.push(current.position)
+      path.push(current)
       currentKey = getKey(current.position, current.direction)
     }
   }
 
-  path.push(goal.position)
   return path.reverse()
 }
