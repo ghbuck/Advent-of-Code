@@ -17,6 +17,7 @@ export interface DijkstraParams<T> {
   goal: Point
   turnCost?: number
   turnCostCalculator?: (dirKey: CardinalDirection) => number
+  moveCostCalculator?: (dirKey: CardinalDirection) => number
   freeSpace?: T
   blockedSpace?: T
   endChar?: T
@@ -32,7 +33,7 @@ const getKey = (p: Point, dir?: Point) => {
   return dir ? `${p.x},${p.y},${dir.x},${dir.y}` : `${p.x},${p.y}`
 }
 
-export const runDijkstra = <T>({ grid, startNode, goal, turnCost = 0, turnCostCalculator, freeSpace, blockedSpace, endChar, doAnimation }: DijkstraParams<T>): DijkstraResults[] => {
+export const runDijkstra = <T>({ grid, startNode, goal, turnCost = 0, turnCostCalculator, moveCostCalculator, freeSpace, blockedSpace, endChar, doAnimation }: DijkstraParams<T>): DijkstraResults[] => {
   const results: DijkstraResults[] = []
 
   const maxRowIndex = grid.length - 1
@@ -44,7 +45,7 @@ export const runDijkstra = <T>({ grid, startNode, goal, turnCost = 0, turnCostCa
 
   pq.enqueue({ ...startNode, cost: 0 }, 0)
 
-  const loggingGrid = JSON.parse(JSON.stringify(grid)) as string[][]
+  const loggingGrid = JSON.parse(JSON.stringify(grid).replace('null', ' ')) as string[][]
 
   while (!pq.isEmpty()) {
     const current = pq.dequeue()
@@ -71,16 +72,18 @@ export const runDijkstra = <T>({ grid, startNode, goal, turnCost = 0, turnCostCa
 
       if (!isBetweenInclusive(newPosition.x, 0, maxColIndex) || !isBetweenInclusive(newPosition.y, 0, maxRowIndex)) continue
 
-      const isEndSpace = endChar !== undefined && grid[newPosition.y][newPosition.x] === endChar
-      const isBlockedSpace = blockedSpace !== undefined && grid[newPosition.y][newPosition.x] === blockedSpace
-      const isFreeSpace = !isBlockedSpace && (freeSpace === undefined || grid[newPosition.y][newPosition.x] === freeSpace)
+      const nextSpace = grid[newPosition.y][newPosition.x]
+
+      const isEndSpace = endChar !== undefined && nextSpace === endChar
+      const isBlockedSpace = blockedSpace !== undefined && nextSpace === blockedSpace
+      const isFreeSpace = !isBlockedSpace && (freeSpace === undefined || nextSpace === freeSpace)
 
       if (isEndSpace || isFreeSpace) {
         const isTurn = current.direction && (current.direction.x !== direction.x || current.direction.y !== direction.y)
-        const extraCost = isTurn ? (turnCostCalculator !== undefined ? turnCostCalculator(dirKey) : turnCost) : 0
 
-        const moveCost = 1 + extraCost
-        const newCost = current.cost + moveCost
+        const extraCost = isTurn ? (turnCostCalculator !== undefined ? turnCostCalculator(dirKey) : turnCost) : 0
+        const moveCost = moveCostCalculator !== undefined ? moveCostCalculator(dirKey) : 1
+        const newCost = current.cost + moveCost + extraCost
 
         const newKey = getKey(newPosition, direction)
 
@@ -94,7 +97,7 @@ export const runDijkstra = <T>({ grid, startNode, goal, turnCost = 0, turnCostCa
 
             const start = Date.now()
             let now = start
-            while (now - start < 10) {
+            while (now - start < 100) {
               now = Date.now()
             }
           }
