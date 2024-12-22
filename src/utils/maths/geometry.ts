@@ -13,3 +13,8 @@ export const findFourthPoint = (p1: Point, p2: Point, p3: Point): Point => {
 
   return p4
 }
+
+// Helper to calculate distance between two points
+export const distanceBetweenPoints = (a: Point, b: Point): number => {
+  return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2)
+}

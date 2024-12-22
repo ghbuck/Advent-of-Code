@@ -40,6 +40,13 @@ interface Cell<T> {
   neighbors: NeighborhoodMap
 }
 
+interface SideInfo<T> {
+  cell: Cell<T>
+  cellKey: number
+  direction: NeighborLocation
+  counted: boolean
+}
+
 export class Grid<T> {
   #cells: Map<number, Cell<T>>
   #bounds: Bounds
@@ -442,29 +449,66 @@ export class Grid<T> {
   /**
    * Checks a cell and its neighbors to see if we have found a new side
    *
-   * @param {Cell<T>} checkCell
+   * This was a fun one to figure out. The key was creating the SideInfo interface.
+   * This way I could iterate over the cells with exposed edges and only count new ones as a side.
+   * The key line is the `info.filter()`.
+   *
+   * @param {SideInfo<T>[]} info - the side information for the region
    */
-  #checkForNewSides(checkCell: Cell<T>): number {
-    // garbage just to quiet eslint
-    const test = checkCell.point.x
-    return test
+  #countSides(info: SideInfo<T>[]): number {
+    if (info.length === 1) {
+      return 4
+    } else {
+      let sides = 0
+
+      for (const side of info) {
+        if (!side.counted) {
+          sides++
+          side.counted = true
+        }
+
+        for (const neighborCellKey of side.cell.neighbors.values()) {
+          const neighborSides = info.filter((entry: SideInfo<T>) => entry.cellKey === neighborCellKey && entry.direction === side.direction)
+          for (const neighborSide of neighborSides) {
+            neighborSide.counted = true
+          }
+        }
+      }
+
+      return sides
+    }
   }
 
+  /**
+   *
+   * @param {Set<number>} cells - a set of all item cells in the region
+   * @returns {RegionInfo} a RegionInfo object with area, perimeter, and side count
+   */
   #calculateRegionInfo(cells: Set<number>): RegionInfo {
     let perimeter = 0
-    let sides = 0
 
     const sortedCells = [...cells].sort((a, b) => a - b)
+    const neighborDirections: NeighborLocation[] = ['above', 'right', 'below', 'left']
+
+    const sideInfo: SideInfo<T>[] = []
 
     for (const cellKey of sortedCells) {
       const cell = this.#cells.get(cellKey)
 
       if (cell !== undefined) {
-        const definedNeighbors = [...cell.neighbors.entries()].filter((entry: [NeighborLocation, number | undefined]) => entry[1] !== undefined)
-        const exposedEdges = 4 - definedNeighbors.length
+        let definedAndMatchingNeighbors = 0
 
+        for (const direction of neighborDirections) {
+          const neighborKey = cell.neighbors.get(direction)
+          if (neighborKey !== undefined && cells.has(neighborKey)) {
+            ++definedAndMatchingNeighbors
+          } else {
+            sideInfo.push({ cell, cellKey, direction, counted: false })
+          }
+        }
+
+        const exposedEdges = 4 - definedAndMatchingNeighbors
         perimeter += exposedEdges
-        sides += this.#checkForNewSides(cell)
       }
     }
 
@@ -472,13 +516,13 @@ export class Grid<T> {
       cellNumbers: sortedCells,
       area: sortedCells.length,
       perimeter,
-      sides,
+      sides: this.#countSides(sideInfo),
     }
   }
 
   /**
    * @param {T} item - an item potentially in the grid
-   * @returns the coordinates of the all matching grid items
+   * @returns {RegionResponse<T>} the item along with a RegionInfo object
    */
   async findRegions(item: T): Promise<RegionResponse<T>> {
     let cells = this.#findCells(item)
