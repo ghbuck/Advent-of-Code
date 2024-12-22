@@ -6,6 +6,7 @@
     "lint": "eslint .",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
     "newday": "tsx src/index.ts --newday",
+    "playground": "tsx src/tests/playground.ts",
     "session": "tsx src/index.ts --session",
     "start": "tsx src/index.ts",
     "test": "jest"
