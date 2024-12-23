@@ -20,6 +20,7 @@ export default tseslint.config(
       'lint-staged.config.mjs',
       'jest.config.mjs',
       'prettier.config.mjs',
+      'src/tests/playground.ts',
       'src/utils/template/index.ts'
     ]
   },
