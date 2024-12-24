@@ -30,12 +30,15 @@ for (const [index, arg] of process.argv.entries()) {
     case '-p':
     case '--part':
       if (nextArg === '1' || nextArg == '2') {
-        params.part = nextArg as PartNum
+        params.part = Number(nextArg) as PartNum
       }
       break
     case '-t':
     case '--test':
       params.isTest = true
+      if (nextArg === '1' || nextArg == '2') {
+        params.part = Number(nextArg) as PartNum
+      }
       break
     case '--newday':
       params.createNewDay = true

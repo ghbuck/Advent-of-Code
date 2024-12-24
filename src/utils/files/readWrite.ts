@@ -52,7 +52,12 @@ export const createNewDay = async (params: RunParams) => {
 }
 
 export const getInput = async (params: RunParams): Promise<string> => {
-  const filename = `${params.day}${params.isTest ? '_example' : ''}.txt`
+  let testFilename = params.isTest ? '_example' : ''
+  if (testFilename !== '' && params.part !== 'all') {
+    testFilename += `_${params.part}`
+  }
+
+  const filename = `${params.day}${testFilename}.txt`
   const path = resolve('.', 'input', `${params.year}`, filename)
 
   let input = ''

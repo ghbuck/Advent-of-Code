@@ -26,9 +26,9 @@ npm run format
 
 ```bash
   -y \d{4}   --year \d{4}    The year to run (default: current year)
-  -d \d{1,2} --day \d{1,2}   The day to run (default: current day num)
+  -d \d{1,2} --day  \d{1,2}  The day to run (default: current day num)
   -p \d      --part \d       The solution to run (defaults to 'all')
-  -t         --test          Flag to run with the test data
+  -t \d      --test \d       Flag to run with the test data (add a number if the day has more than one)
 ```
 
 ## Yearly READMEs
