@@ -1,4 +1,4 @@
-import { PartNum } from 'utils/dataTypes/index.js'
+import { Answer, PartNum } from 'utils/dataTypes/index.js'
 
 export interface RunParams {
   year: number
@@ -14,14 +14,14 @@ export interface Day {
 }
 
 export interface Solution {
-  part1: number | bigint | string | undefined
-  part2: number | bigint | string | undefined
+  part1: Answer
+  part2: Answer
 }
 
 export interface AnswerParams {
   params: RunParams
-  answer1: number | bigint | string | undefined
-  answer2: number | bigint | string | undefined
+  answer1: Answer
+  answer2: Answer
   solution: Solution
 }
 
