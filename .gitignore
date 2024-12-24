@@ -1,7 +1,9 @@
 # to follow AoC guideline requests, do not commit input data
 input/*
 
+# other custom stuff
 playground.ts
+src/utils/files/oneOffs.ts
 .DS_Store
 
 # Logs
