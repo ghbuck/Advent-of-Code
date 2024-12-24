@@ -6,7 +6,7 @@ interface QueueNode<T> {
 export class PriorityQueue<T> {
   private queue: QueueNode<T>[] = []
 
-  enqueue(item: T, priority: number): void {
+  enqueue(item: T, priority = 0): void {
     this.queue.push({ item, priority })
     this.queue.sort((a, b) => a.priority - b.priority)
   }
