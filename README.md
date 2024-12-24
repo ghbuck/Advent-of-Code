@@ -22,7 +22,7 @@ npm run lint
 npm run format
 ```
 
-## RunParams
+### RunParams
 
 ```bash
   -y \d{4}   --year \d{4}    The year to run (default: current year)
@@ -30,6 +30,10 @@ npm run format
   -p \d      --part \d       The solution to run (defaults to 'all')
   -t         --test          Flag to run with the test data
 ```
+
+## Yearly READMEs
+
+- [2024](src/2024/README.md)
 
 ## Further Info
 
