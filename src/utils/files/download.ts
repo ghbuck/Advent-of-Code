@@ -62,11 +62,11 @@ const parseHtmlStringForReadme = (day: number, year: number, htmlString: string)
   const readme = readFileSync(readmePath).toString()
   const readmeParts = readme.split(/^(?=## )/m).map((mainSection: string) => mainSection.split(/^(?=### )/m))
   const solutions = readmeParts[2]
-  const existingDays = solutions.map((section: string) => Number(section.substring(8, section.indexOf(':')))).filter((day: number) => !isNaN(day))
+  const existingDays = solutions.map((section: string) => Number(section.substring(section.indexOf('Day ') + 4, section.indexOf(':')))).filter((day: number) => !isNaN(day))
 
   const title = htmlString.match(/<h2>--- ?(Day \d+: .+?) ?---<\/h2>/)?.[1]
   if (title !== undefined && !existingDays.includes(day)) {
-    const newBodyPart = `\n### [${title}](https://adventofcode.com/${year}/day/${day})\n\n` + '#### Part 1: \n\n' + '#### Part 2: \n'
+    const newBodyPart = `### [${title}](https://adventofcode.com/${year}/day/${day})\n\n` + '#### $\\textsf{\\color{red}{Part 1:}}$\n\n' + '#### $\\textsf{\\color{green}{Part 2:}}$\n\n'
 
     solutions.push(newBodyPart)
     solutions.sort((a: string, b: string) => {
@@ -75,8 +75,8 @@ const parseHtmlStringForReadme = (day: number, year: number, htmlString: string)
       } else if (b.startsWith('## Solution')) {
         return 1
       } else {
-        const testA = Number(a.substring(9, a.indexOf(':')))
-        const testB = Number(b.substring(9, b.indexOf(':')))
+        const testA = Number(a.substring(a.indexOf('Day ') + 4, a.indexOf(':')))
+        const testB = Number(b.substring(b.indexOf('Day ') + 4, b.indexOf(':')))
         return testA - testB
       }
     })
