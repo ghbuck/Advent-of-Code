@@ -134,9 +134,24 @@ Using the left column of numbers, we reduce the array, at each stop multiplying 
 
 ### [Day 20: Race Condition](https://adventofcode.com/2024/day/20)
 
-#### $\textsf{\color{red}{Part 1:}}$
+All told, not too bad of a day. Especially once it dawned on me (by getting a tip from a friend that I should look into [Manhattan distance](https://www.datacamp.com/tutorial/manhattan-distance)). Parts 1 and 2 differ only by the length of time allowed for a cheat.
 
-#### $\textsf{\color{green}{Part 2:}}$
+The cost of cheating through a single wall is 2, step-in and step-out. Because each move costs 1 unit of time this has a significant effect on how much one can cheat.
+
+#### $\textsf{\color{red}{Part 1: Doing the two-step}}$
+
+This first part is where almost 100% of the logic work was written.
+
+I decided to use the Dijkstra algorithm that I wrote earlier to map out the path. Yes, there wasn't any branching, but it kept me from having to write a loop to find all the free spaces.
+
+> [!NOTE]
+> I refactored `DijkstraParams<T>` interface. This will most assuredly break previous usages until they are updated.
+
+It was simple, then, to calculate the time distance between two points based on their positions in the path. And then by calculating the Manhattan distance between them I could see if the cheat was possible and if so, would it actually save more than 100 units requested.
+
+#### $\textsf{\color{green}{Part 2: Parameterize the cheat time}}$
+
+All this part required was to update the function parameters to accept a `maxCheatTime` rather than the hardcoded `2` that was there from Part 1.
 
 ### [Day 21: Keypad Conundrum](https://adventofcode.com/2024/day/21)
 
