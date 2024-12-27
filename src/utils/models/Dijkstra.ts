@@ -61,8 +61,8 @@ const findPoint = <T>(grid: T[][], item: T): Point => {
   return point
 }
 
-const getKey = (p: Point, dir?: Point) => {
-  return dir ? `${p.x},${p.y},${dir.x},${dir.y}` : `${p.x},${p.y}`
+const getKey = ({ position, direction }: DijkstraNode) => {
+  return `${position.x},${position.y}${direction !== undefined ? `,${direction.x},${direction.y}` : ''}`
 }
 
 export const runDijkstra = <T>({ grid, start, end, turnCost = 0, turnCostCalculator, moveCostCalculator, freeSpace, blockedSpace, doAnimation }: DijkstraParams<T>): DijkstraResults[] => {
@@ -88,10 +88,10 @@ export const runDijkstra = <T>({ grid, start, end, turnCost = 0, turnCostCalcula
     const current = pq.dequeue()
     if (current === undefined) continue
 
-    const currKey = getKey(current.position, current.direction)
+    const currentKey = getKey(current)
 
-    if (visited.has(currKey)) continue
-    visited.add(currKey)
+    if (visited.has(currentKey)) continue
+    visited.add(currentKey)
 
     if (isEqual(current.position, endPoint)) {
       results.push({
@@ -122,10 +122,11 @@ export const runDijkstra = <T>({ grid, start, end, turnCost = 0, turnCostCalcula
         const moveCost = moveCostCalculator !== undefined ? moveCostCalculator(dirKey) : 1
         const newCost = current.cost + moveCost + extraCost
 
-        const newKey = getKey(newPosition, direction)
+        const newNode: DijkstraNode = { position: newPosition, cost: newCost, direction: direction }
+        const newKey = getKey(newNode)
 
         if (!visited.has(newKey)) {
-          pq.enqueue({ position: newPosition, cost: newCost, direction: direction }, newCost)
+          pq.enqueue(newNode, newCost)
           parentMap.set(newKey, current)
 
           if (doAnimation) {
@@ -150,13 +151,13 @@ function reconstructPath(endNode: DijkstraNode, parentMap: Map<string, DijkstraN
   const path: DijkstraNode[] = []
   path.push(endNode)
 
-  let currentKey = getKey(endNode.position, endNode.direction)
+  let currentKey = getKey(endNode)
 
   while (parentMap.has(currentKey)) {
     const current = parentMap.get(currentKey)
     if (current !== undefined) {
       path.push(current)
-      currentKey = getKey(current.position, current.direction)
+      currentKey = getKey(current)
     }
   }
 
