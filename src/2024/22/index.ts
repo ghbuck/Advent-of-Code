@@ -103,7 +103,7 @@ const calculateMaximalBananas = (calculatedValues: CodeInfo[]): number => {
 export const run = async (params: RunParams) => {
   const solution: Solution = {
     part1: params.isTest ? 37327623 : 19877757850,
-    part2: params.isTest ? 23 : undefined,
+    part2: params.isTest ? 23 : 2399,
   }
 
   const secretCodes = parseInput(await getInput(params))
