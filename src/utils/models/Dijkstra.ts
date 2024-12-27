@@ -11,16 +11,17 @@ export interface DijkstraNode {
   direction?: Point
 }
 
+type DijkstraStartNode = Omit<DijkstraNode, 'cost'>
+
 export interface DijkstraParams<T> {
   grid: T[][]
-  startNode: Omit<DijkstraNode, 'cost'>
-  goal: Point
+  start: DijkstraStartNode | T
+  end: Point | T
   turnCost?: number
   turnCostCalculator?: (dirKey: CardinalDirection) => number
   moveCostCalculator?: (dirKey: CardinalDirection) => number
   freeSpace?: T
   blockedSpace?: T
-  endChar?: T
   doAnimation?: boolean
 }
 
@@ -29,11 +30,42 @@ export interface DijkstraResults {
   cost: number
 }
 
+const assertIsNode = <T>(item: DijkstraNode | Point | T): item is DijkstraNode => {
+  return (item as DijkstraNode).position !== undefined
+}
+
+const assertIsPoint = <T>(item: Point | T): item is Point => {
+  return (item as Point).x !== undefined
+}
+
+const findNode = <T>(grid: T[][], item: T): DijkstraStartNode => {
+  return {
+    position: findPoint(grid, item),
+  }
+}
+
+const findPoint = <T>(grid: T[][], item: T): Point => {
+  const point: Point = { x: 0, y: 0 }
+
+  outerLoop: for (const [rowIndex, row] of grid.entries()) {
+    for (const [colIndex, cell] of row.entries()) {
+      if (cell === item) {
+        point.x = colIndex
+        point.y = rowIndex
+
+        break outerLoop
+      }
+    }
+  }
+
+  return point
+}
+
 const getKey = (p: Point, dir?: Point) => {
   return dir ? `${p.x},${p.y},${dir.x},${dir.y}` : `${p.x},${p.y}`
 }
 
-export const runDijkstra = <T>({ grid, startNode, goal, turnCost = 0, turnCostCalculator, moveCostCalculator, freeSpace, blockedSpace, endChar, doAnimation }: DijkstraParams<T>): DijkstraResults[] => {
+export const runDijkstra = <T>({ grid, start, end, turnCost = 0, turnCostCalculator, moveCostCalculator, freeSpace, blockedSpace, doAnimation }: DijkstraParams<T>): DijkstraResults[] => {
   const results: DijkstraResults[] = []
 
   const maxRowIndex = grid.length - 1
@@ -42,6 +74,11 @@ export const runDijkstra = <T>({ grid, startNode, goal, turnCost = 0, turnCostCa
   const visited = new Set<string>()
   const pq = new PriorityQueue<DijkstraNode>()
   const parentMap = new Map<string, DijkstraNode>()
+
+  const startNode = assertIsNode(start) ? start : findNode(grid, start)
+
+  const endPoint = assertIsPoint(end) ? end : findPoint(grid, end)
+  const endChar = !assertIsPoint(end) ? end : grid[endPoint.y][endPoint.x]
 
   pq.enqueue({ ...startNode, cost: 0 }, 0)
 
@@ -56,7 +93,7 @@ export const runDijkstra = <T>({ grid, startNode, goal, turnCost = 0, turnCostCa
     if (visited.has(currKey)) continue
     visited.add(currKey)
 
-    if (isEqual(current.position, goal)) {
+    if (isEqual(current.position, endPoint)) {
       results.push({
         path: reconstructPath(current, parentMap),
         cost: current.cost,
@@ -109,11 +146,11 @@ export const runDijkstra = <T>({ grid, startNode, goal, turnCost = 0, turnCostCa
   return results
 }
 
-function reconstructPath(goal: DijkstraNode, parentMap: Map<string, DijkstraNode>): DijkstraNode[] {
+function reconstructPath(endNode: DijkstraNode, parentMap: Map<string, DijkstraNode>): DijkstraNode[] {
   const path: DijkstraNode[] = []
-  path.push(goal)
+  path.push(endNode)
 
-  let currentKey = getKey(goal.position, goal.direction)
+  let currentKey = getKey(endNode.position, endNode.direction)
 
   while (parentMap.has(currentKey)) {
     const current = parentMap.get(currentKey)
