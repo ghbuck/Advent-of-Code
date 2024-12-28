@@ -1,7 +1,7 @@
 import { clearScreen } from 'ansi-escapes'
 import kleur from 'kleur'
 import isEqual from 'lodash.isequal'
-import { CardinalDirection, cardinalDirections, Point, tokenDirections } from 'utils/dataTypes/index.js'
+import { CardinalDirection, cardinalDirections, eastPrioritizedDirections, getCardinalDirection, northPrioritizedDirections, Point, southPrioritizedDirections, tokenDirections, westPrioritizedDirections } from 'utils/dataTypes/index.js'
 import { isBetweenInclusive } from 'utils/maths/comparisons.js'
 import { PriorityQueue } from 'utils/models/PriorityQueue.js'
 
@@ -11,7 +11,11 @@ export interface DijkstraNode {
   direction?: Point
 }
 
-type DijkstraStartNode = Omit<DijkstraNode, 'cost'>
+export interface DijkstraNodeV2 extends DijkstraNode {
+  previous: DijkstraNodeV2 | undefined
+}
+
+type DijkstraStartNode = Omit<DijkstraNode | DijkstraNodeV2, 'cost'>
 
 export interface DijkstraParams<T> {
   grid: T[][]
@@ -61,15 +65,36 @@ const findPoint = <T>(grid: T[][], item: T): Point => {
   return point
 }
 
-const getKey = ({ position, direction }: DijkstraNode) => {
+const outOfBounds = (point: Point, bounds: Point): boolean => !isBetweenInclusive(point.x, 0, bounds.x) || !isBetweenInclusive(point.y, 0, bounds.y)
+
+const getKey = ({ position, direction }: DijkstraNode | DijkstraNodeV2) => {
   return `${position.x},${position.y}${direction !== undefined ? `,${direction.x},${direction.y}` : ''}`
+}
+
+const getPrioritizedDirections = (firstDirection: Point | undefined): [CardinalDirection, Point][] => {
+  if (firstDirection === undefined) {
+    return [...cardinalDirections.entries()]
+  } else {
+    switch (getCardinalDirection(firstDirection)) {
+      case 'north':
+        return northPrioritizedDirections
+      case 'south':
+        return southPrioritizedDirections
+      case 'east':
+        return eastPrioritizedDirections
+      case 'west':
+        return westPrioritizedDirections
+    }
+  }
 }
 
 export const runDijkstra = <T>({ grid, start, end, turnCost = 0, turnCostCalculator, moveCostCalculator, freeSpace, blockedSpace, doAnimation }: DijkstraParams<T>): DijkstraResults[] => {
   const results: DijkstraResults[] = []
 
-  const maxRowIndex = grid.length - 1
-  const maxColIndex = grid[0].length - 1
+  const bounds: Point = {
+    x: grid[0].length - 1,
+    y: grid.length - 1,
+  }
 
   const visited = new Set<string>()
   const pq = new PriorityQueue<DijkstraNode>()
@@ -95,19 +120,19 @@ export const runDijkstra = <T>({ grid, start, end, turnCost = 0, turnCostCalcula
 
     if (isEqual(current.position, endPoint)) {
       results.push({
-        path: reconstructPath(current, parentMap),
+        path: reconstructDijkstraPath(current, parentMap),
         cost: current.cost,
       })
       continue
     }
 
-    for (const [dirKey, direction] of cardinalDirections.entries()) {
+    for (const [dirKey, direction] of getPrioritizedDirections(current.direction)) {
       const newPosition: Point = {
         x: current.position.x + direction.x,
         y: current.position.y + direction.y,
       }
 
-      if (!isBetweenInclusive(newPosition.x, 0, maxColIndex) || !isBetweenInclusive(newPosition.y, 0, maxRowIndex)) continue
+      if (outOfBounds(newPosition, bounds)) continue
 
       const nextSpace = grid[newPosition.y][newPosition.x]
 
@@ -147,7 +172,7 @@ export const runDijkstra = <T>({ grid, start, end, turnCost = 0, turnCostCalcula
   return results
 }
 
-function reconstructPath(endNode: DijkstraNode, parentMap: Map<string, DijkstraNode>): DijkstraNode[] {
+function reconstructDijkstraPath(endNode: DijkstraNode, parentMap: Map<string, DijkstraNode>): DijkstraNode[] {
   const path: DijkstraNode[] = []
   path.push(endNode)
 
@@ -159,6 +184,97 @@ function reconstructPath(endNode: DijkstraNode, parentMap: Map<string, DijkstraN
       path.push(current)
       currentKey = getKey(current)
     }
+  }
+
+  return path.reverse()
+}
+
+export const findAllOptimalPaths = <T>({ grid, start, end, turnCost = 0, turnCostCalculator, moveCostCalculator, freeSpace, blockedSpace }: DijkstraParams<T>): DijkstraResults[] => {
+  const optimalPaths: DijkstraNodeV2[] = []
+
+  const bounds: Point = {
+    x: grid[0].length - 1,
+    y: grid.length - 1,
+  }
+
+  const best = new Map<string, number>()
+  const queue = new PriorityQueue<DijkstraNodeV2>()
+
+  const startNode = assertIsNode(start) ? start : findNode(grid, start)
+
+  const endPoint = assertIsPoint(end) ? end : findPoint(grid, end)
+  const endChar = !assertIsPoint(end) ? end : grid[endPoint.y][endPoint.x]
+
+  queue.enqueue({ ...startNode, cost: 0, previous: undefined }, 0)
+
+  let cheapestPathCost = Infinity
+
+  while (!queue.isEmpty()) {
+    const current = queue.dequeue()
+    if (current === undefined) continue
+
+    const currentKey = getKey(current)
+    const bestSoFar = best.get(currentKey) ?? Infinity
+
+    if (current.cost > bestSoFar) continue
+
+    best.set(currentKey, current.cost)
+
+    if (isEqual(current.position, endPoint)) {
+      if (current.cost > cheapestPathCost) continue
+      if (current.cost < cheapestPathCost) optimalPaths.length = 0
+
+      optimalPaths.push(current)
+      cheapestPathCost = current.cost
+
+      continue
+    }
+
+    for (const [directionKey, direction] of getPrioritizedDirections(current.direction)) {
+      const newPosition: Point = {
+        x: current.position.x + direction.x,
+        y: current.position.y + direction.y,
+      }
+
+      if (outOfBounds(newPosition, bounds)) continue
+
+      const nextSpace = grid[newPosition.y][newPosition.x]
+
+      const isEndSpace = endChar !== undefined && nextSpace === endChar
+      const isBlockedSpace = blockedSpace !== undefined && nextSpace === blockedSpace
+      const isFreeSpace = !isBlockedSpace && (freeSpace === undefined || nextSpace === freeSpace)
+
+      if (isEndSpace || isFreeSpace) {
+        const isTurn = current.direction && (current.direction.x !== direction.x || current.direction.y !== direction.y)
+
+        const extraCost = isTurn ? (turnCostCalculator !== undefined ? turnCostCalculator(directionKey) : turnCost) : 0
+        const moveCost = moveCostCalculator !== undefined ? moveCostCalculator(directionKey) : 1
+        const newCost = current.cost + moveCost + extraCost
+
+        if (newCost < cheapestPathCost && newCost - (current.previous?.cost ?? 0) !== 1000) {
+          queue.enqueue({ position: newPosition, cost: newCost, direction: direction, previous: current }, 0)
+        }
+      }
+    }
+  }
+
+  return optimalPaths.map(
+    (node: DijkstraNodeV2): DijkstraResults => ({
+      path: reconstructOptimalPaths(node),
+      cost: node.cost,
+    }),
+  )
+}
+
+function reconstructOptimalPaths(endNode: DijkstraNodeV2): DijkstraNode[] {
+  const path: DijkstraNode[] = []
+  path.push(endNode)
+
+  let previousNode = endNode.previous
+
+  while (previousNode !== undefined) {
+    path.push(previousNode)
+    previousNode = previousNode.previous
   }
 
   return path.reverse()

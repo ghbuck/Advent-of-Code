@@ -1,4 +1,4 @@
-import { Point, pointsToDirections, tokenDirections } from 'utils/dataTypes/index.js'
+import { CardinalDirection, Point, pointsToDirections, tokenDirections } from 'utils/dataTypes/index.js'
 
 export const directionToToken = (direction: Point | undefined): string => {
   let token = ''
@@ -11,4 +11,8 @@ export const directionToToken = (direction: Point | undefined): string => {
   }
 
   return token
+}
+
+export const getCardinalDirection = (direction: Point | undefined): CardinalDirection => {
+  return (direction !== undefined ? pointsToDirections.get(direction) : undefined) ?? 'north'
 }
