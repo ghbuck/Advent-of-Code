@@ -12,6 +12,7 @@ const params: RunParams = {
   day: defaultDate.getDate(),
   part: 'all',
   isTest: false,
+  testPart: 0,
   createNewDay: false,
   saveSessionId: false,
 }
@@ -36,8 +37,8 @@ for (const [index, arg] of process.argv.entries()) {
     case '-t':
     case '--test':
       params.isTest = true
-      if (nextArg === '1' || nextArg == '2') {
-        params.part = Number(nextArg) as PartNum
+      if (!isNaN(Number(nextArg))) {
+        params.testPart = Number(nextArg)
       }
       break
     case '--newday':
