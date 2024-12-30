@@ -4,6 +4,7 @@ import { Point, RunParams, Solution } from 'utils/dataTypes/index.js'
 import { getInput } from 'utils/files/index.js'
 import { DrawGridParams, Grid, NeighborLocation } from 'utils/models/Grid.js'
 import { printAnswers } from 'utils/printing/index.js'
+import { processCrateMovement } from './crateGrid.js'
 
 //#region file globals
 
@@ -283,21 +284,30 @@ const getBoxesGpsScore = (grid: Grid<string>, aBox: string): number => {
 
 export const run = async (params: RunParams) => {
   const solution: Solution = {
-    part1: params.isTest ? 10092 : 1398947,
-    part2: params.isTest ? 9021 : undefined,
+    part1: params.isTest ? (params.testPart === 1 ? 2028 : 10092) : 1398947,
+    part2: params.isTest ? 9021 : 1397393,
   }
 
-  const result1 = await parseInput(params, false)
-  const grid1 = processMovement(result1, false, params.isTest)
-  const savedABox = aBox
+  let part1Answer: number | undefined
+  if (params.part === 'all' || params.part === 1) {
+    const result1 = await parseInput(params, false)
+    const grid1 = processMovement(result1, false, params.isTest)
 
-  // const result2 = await parseInput(params, true)
-  // const grid2 = processMovement(result2, true, true)
+    part1Answer = getBoxesGpsScore(grid1, aBox)
+  }
+
+  let part2Answer: number | undefined
+  if (params.part === 'all' || params.part === 2) {
+    const result2 = await parseInput(params, true)
+    const grid2 = processCrateMovement(result2)
+
+    part2Answer = getBoxesGpsScore(grid2, '[')
+  }
 
   printAnswers({
     params,
-    answer1: getBoxesGpsScore(grid1, savedABox),
-    answer2: undefined,
+    answer1: part1Answer,
+    answer2: part2Answer,
     solution,
   })
 }

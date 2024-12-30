@@ -279,15 +279,25 @@ export class Grid<T> {
    * Puts an item on the grid.
    *
    * @param {T} item
-   * @param {Point} point = the desired coordinates
+   * @param {Point} location = the desired coordinates
    * @throws {Error} if the new item would be placed out of bounds
    */
-  putItem(item: T, point: Point) {
-    if (!this.#bounds.isInside(point)) {
-      throw new Error(kleur.red(`The requested point, ${JSON.stringify(point)}, is outside the bounds of the grid, ${JSON.stringify(this.#bounds.getMax())}.`))
+  putItem(item: T, location: Point | number) {
+    let cellNum = 0
+    let cellPoint: Point = { x: 0, y: 0 }
+
+    if (typeof location === 'number') {
+      cellNum = location
+      cellPoint = this.#cells.get(cellNum)?.point ?? { x: 0, y: 0 }
+    } else {
+      if (!this.#bounds.isInside(location)) {
+        throw new Error(kleur.red(`The requested point, ${JSON.stringify(location)}, is outside the bounds of the grid, ${JSON.stringify(this.#bounds.getMax())}.`))
+      }
+
+      cellNum = this.getColumnCount() * location.y + location.x + 1
+      cellPoint = location
     }
 
-    const cellNum = this.getColumnCount() * point.y + point.x + 1
     let items: T[] = [item]
 
     const exitingCell = this.#cells.get(cellNum)
@@ -297,7 +307,7 @@ export class Grid<T> {
 
     this.#cells.set(cellNum, {
       items,
-      point,
+      point: cellPoint,
       neighbors: new Map<NeighborLocation, number | undefined>(),
     })
   }
@@ -305,8 +315,14 @@ export class Grid<T> {
   /**
    *
    */
-  deleteItem(item: T, point: Point) {
-    const cellNum = [...this.#cells.entries()].filter((entry: [number, Cell<T>]) => entry[1].point.x === point.x && entry[1].point.y === point.y).map((entry: [number, Cell<T>]) => entry[0])[0]
+  deleteItem(item: T, location: Point | number) {
+    let cellNum = 0
+    if (typeof location === 'number') {
+      cellNum = location
+    } else {
+      cellNum = [...this.#cells.entries()].filter((entry: [number, Cell<T>]) => entry[1].point.x === location.x && entry[1].point.y === location.y).map((entry: [number, Cell<T>]) => entry[0])[0]
+    }
+
     const cell = this.#cells.get(cellNum)
 
     if (cell !== undefined) {
@@ -559,6 +575,22 @@ export class Grid<T> {
    */
   findPoint(item: T): Point | undefined {
     return this.findPoints(item)[0]
+  }
+
+  /**
+   * @param {T} item - an item potentially in the grid
+   * @returns the coordinates of the all matching grid items
+   */
+  findCellNumbers(item: T): number[] {
+    return this.#findCells(item).map((entry: [number, Cell<T>]) => entry[0])
+  }
+
+  /**
+   * @param {T} item - an item potentially in the grid
+   * @returns the cell number of the first matching grid item
+   */
+  findCellNumber(item: T): number | undefined {
+    return this.findCellNumbers(item)[0]
   }
 
   //#endregion

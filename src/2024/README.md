@@ -104,9 +104,17 @@ Using the left column of numbers, we reduce the array, at each stop multiplying 
 
 ### [Day 15: Warehouse Woes](https://adventofcode.com/2024/day/15)
 
-#### $\textsf{\color{red}{Part 1:}}$
+#### $\textsf{\color{red}{Part 1: Moving boxes isn't that bad}}$
 
-#### $\textsf{\color{green}{Part 2:}}$
+If I'm remembering correctly, I used this day to start building my Grid model. Kinda got a little carried away, coding for all kinds of edge cases. Classic me, get lost in the weeds if I don't have a deadline. That being said, part 1 was over-engineered, but it worked.
+
+Then came part 2…
+
+#### $\textsf{\color{green}{Part 2: Crate hell}}$
+
+The logic I had built up for moving boxes became so unweildy when I attempted to refactor it to handle two character crates. I spent hours upon hours trying to get it to work only to have things break over and over and over and over and…
+
+So I just wrote a new file. Made it quick and dirty. And guess what… it worked. I'm really good at my job… 🤦‍♂️
 
 ### [Day 16: Reindeer Maze](https://adventofcode.com/2024/day/16)
 
