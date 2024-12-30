@@ -130,9 +130,15 @@ So I just wrote a new file. Made it quick and dirty. And guess what… it worked
 
 ### [Day 18: RAM Run](https://adventofcode.com/2024/day/18)
 
-#### $\textsf{\color{red}{Part 1:}}$
+Sooooo much easier than the last few days. For kicks and giggles, I whipped up an A* algorithm model. Just to learn about it and see how it compares to Dijkstra.
 
-#### $\textsf{\color{green}{Part 2:}}$
+#### $\textsf{\color{red}{Part 1: Finding a short path}}$
+
+So very simple. Make the grid. Drop the blockers. Run the A* algorithm.
+
+#### $\textsf{\color{green}{Part 2: Watch your head…}}$
+
+So very simple. Make the grid. Drop a blocker. Run the A* algorithm. Check if the path is empty. Wash. Rinse. Repeat.
 
 ### [Day 19: Linen Layout](https://adventofcode.com/2024/day/19)
 
