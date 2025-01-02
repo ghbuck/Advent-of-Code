@@ -8,7 +8,7 @@ const defaultDate = new Date()
 let sessionId = ''
 
 const params: RunParams = {
-  year: defaultDate.getFullYear(),
+  year: defaultDate.getMonth() === 12 ? defaultDate.getFullYear() : defaultDate.getFullYear() - 1,
   day: defaultDate.getDate(),
   part: 'all',
   isTest: false,
@@ -17,8 +17,15 @@ const params: RunParams = {
   saveSessionId: false,
 }
 
-for (const [index, arg] of process.argv.entries()) {
-  const nextArg = process.argv[index + 1]
+const args = process.argv.slice(2)
+
+for (const [index, arg] of args.entries()) {
+  if (index === 0 && !Number.isNaN(Number(arg))) {
+    params.day = Number(arg)
+    continue
+  }
+
+  const nextArg = args[index + 1]
   switch (arg) {
     case '-y':
     case '--year':
