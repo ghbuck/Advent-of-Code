@@ -124,9 +124,19 @@ So I just wrote a new file. Made it quick and dirty. And guess what… it worked
 
 ### [Day 17: Chronospatial Computer](https://adventofcode.com/2024/day/17)
 
-#### $\textsf{\color{red}{Part 1:}}$
+Today gave me a lot of trouble. Not least of which is, I can't read instructions…
 
-#### $\textsf{\color{green}{Part 2:}}$
+#### $\textsf{\color{red}{Part 1: Do you even compare, bro?}}$
+
+I thought I had massive issues with my program. I couldn't figure out why I was only getting one output on the test example. I wrote and re-wrote. And then, when actually paying attention, saw that my `out` instruction was checking `if (vm.getRegister('A') === 0n)`. \[facepalm\] Once that comparison was fixed everything worked just fine.
+
+#### $\textsf{\color{green}{Part 2: Please don't try to brute force this…}}$
+
+I wrote a simple iterator and attempted to let it run. Yeah, of course that wouldn't work well. So I did some reading, to see if I could understand what other people knew already. Apparently the gist of the program is that does some stuff to the least significant three bits of register A and then shifts them off (`>>> 3`). So the logic goes, if we reverse the program we know that the output has to be `0` and we can then run the program eight times, `0..7` to find the register A values that would output `0`. Using these values we can right shift `<<< 3` them and do it all over again to find the next set of possible values that would output the next program value.
+
+Do this for each of the program values until you get to the last (first) program digit (opcode).
+
+Obviously, this is much more efficient than the brute force method. Brute force would require, at least for my input, hundreds of billions of iterations. This right shifting method is `8 * program.length`.
 
 ### [Day 18: RAM Run](https://adventofcode.com/2024/day/18)
 
