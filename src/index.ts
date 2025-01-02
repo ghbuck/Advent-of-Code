@@ -8,7 +8,7 @@ const defaultDate = new Date()
 let sessionId = ''
 
 const params: RunParams = {
-  year: defaultDate.getFullYear(),
+  year: defaultDate.getMonth() === 12 ? defaultDate.getFullYear() : defaultDate.getFullYear() - 1,
   day: defaultDate.getDate(),
   part: 'all',
   isTest: false,
