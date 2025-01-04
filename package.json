@@ -1,7 +1,26 @@
 {
+  "name": "advent-of-code",
+  "version": "1.0.0",
+  "description": "Advent of Code solutions",
+  "keywords": [
+    "advent-of-code",
+    "advent",
+    "code",
+    "typescript"
+  ],
+  "homepage": "https://github.com/ghbuck/Advent-of-Code#readme",
+  "bugs": {
+    "url": "https://github.com/ghbuck/Advent-of-Code/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghbuck/Advent-of-Code.git"
+  },
+  "license": "Unlicense",
+  "author": "Graham Buck",
   "type": "module",
   "exports": "./index.js",
-  "node": ">=22",
+  "main": "src/index.ts",
   "scripts": {
     "lint": "eslint .",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
@@ -11,12 +30,20 @@
     "start": "tsx src/index.ts",
     "test": "jest"
   },
+  "dependencies": {
+    "@inquirer/select": "^4.0.4",
+    "ansi-escapes": "^7.0.0",
+    "kleur": "^4.1.5",
+    "lodash.isequal": "^4.5.0",
+    "mac-ca": "^3.1.0",
+    "perf_hooks": "^0.0.1"
+  },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "@jest/globals": "^29.7.0",
     "@tsconfig/node-lts": "^22.0.1",
     "@types/lodash.isequal": "^4.5.8",
-    "@types/node": "^22.10.2",
+    "@types/node": "^22.10.5",
     "eslint": "^9.17.0",
     "eslint-config-prettier": "^9.1.0",
     "husky": "^9.1.7",
@@ -26,16 +53,9 @@
     "ts-jest-resolver": "^2.0.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
-    "typescript-eslint": "^8.18.2"
+    "typescript-eslint": "^8.19.0"
   },
-  "dependencies": {
-    "@inquirer/select": "^4.0.4",
-    "ansi-escapes": "^7.0.0",
-    "kleur": "^4.1.5",
-    "lodash.isequal": "^4.5.0",
-    "mac-ca": "^3.1.0",
-    "perf_hooks": "^0.0.1"
-  },
+  "node": ">=22",
   "lint-staged": {
     "*.js": "eslint --cache --fix",
     "*.+(js|ts|json)": "prettier --write"
