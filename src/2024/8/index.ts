@@ -85,7 +85,7 @@ const findAllAntinodes = (nodeMap: NodeMap, maxPoint: Point): Set<string> => {
 export const run = async (params: RunParams) => {
   const solution: Solution = {
     part1: params.isTest ? 14 : 313,
-    part2: params.isTest ? 34 : undefined,
+    part2: params.isTest ? 34 : 1064,
   }
 
   const input = await getInput(params)

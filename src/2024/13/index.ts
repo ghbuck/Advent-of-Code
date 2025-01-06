@@ -71,7 +71,7 @@ const getInputObject = (inputString: string): MachineInfo[] => {
 export const run = async (params: RunParams) => {
   const solution: Solution = {
     part1: params.isTest ? 480 : 26810,
-    part2: params.isTest ? undefined : undefined,
+    part2: params.isTest ? undefined : 108713182988244,
   }
 
   const inputString = await getInput(params)
