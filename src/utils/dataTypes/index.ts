@@ -12,9 +12,9 @@ export const cardinalDirections = new Map<CardinalDirection, Point>([
   ['west', { x: -1, y: 0 }],
 ])
 
-export const pointsToDirections = new Map<Point, CardinalDirection>()
+export const pointsToDirections = new Map<string, CardinalDirection>()
 for (const [key, value] of cardinalDirections) {
-  pointsToDirections.set(value, key)
+  pointsToDirections.set(`${value.x},${value.y}`, key)
 }
 
 export const tokenDirections = new Map<CardinalDirection, string>([

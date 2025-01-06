@@ -1,120 +1,79 @@
-import { directionToToken, Point, RunParams, Solution } from 'utils/dataTypes/index.js'
+import { RunParams, Solution } from 'utils/dataTypes/index.js'
 import { getInput } from 'utils/files/index.js'
-import { DijkstraNode, DijkstraResults, runDijkstra } from 'utils/models/Dijkstra.js'
 import { printAnswers } from 'utils/printing/index.js'
+import { Robot } from './Robot.js'
+import { Keypad } from './Keypad.js'
 
 interface SequenceResult {
   code: string
-  sequence: string
+  // sequence: string
+  numKeystrokes: number
 }
 
-const keypad = [
+const numbers = [
   ['7', '8', '9'],
   ['4', '5', '6'],
   ['1', '2', '3'],
   ['null', '0', 'A'],
 ]
 
-const dirpad = [
+const arrows = [
   ['null', '^', 'A'],
   ['<', 'v', '>'],
 ]
 
-const findKeyPoint = (grid: string[][], key: string): Point | undefined => {
-  for (const [rowIndex, row] of grid.entries()) {
-    for (const [colIndex, col] of row.entries()) {
-      if (col === key) {
-        return { x: colIndex, y: rowIndex }
-      }
-    }
+const calcComplexity = ({ code, numKeystrokes: cost }: SequenceResult): number => cost * Number(code.replaceAll(/[A-Za-z]+/g, ''))
+const sumAllCodeComplexities = (sequences: SequenceResult[]): number => sequences.reduce((total, sequence) => total + calcComplexity(sequence), 0)
+
+const runSolution = (codes: string[], numRobots: number, numKeypad: Keypad, dirKeypad: Keypad): number => {
+  const sequences: SequenceResult[] = []
+
+  let robot: Robot | undefined
+
+  for (let robotNumber = 1; robotNumber <= numRobots; ++robotNumber) {
+    const keypad = robotNumber === numRobots ? numKeypad : dirKeypad
+    const nextRobot = new Robot(robotNumber, keypad, 'A', robot)
+
+    robot = nextRobot
   }
-}
 
-const findShortestPath = (grid: string[][], start: Point | undefined, end: Point | undefined): DijkstraResults | undefined => {
-  if (start !== undefined && end !== undefined) {
-    const step = runDijkstra<string>({
-      grid,
-      startNode: { position: start },
-      goal: end,
-      blockedSpace: 'null',
-    })
+  const numberRobot = robot
+  if (numberRobot === undefined) throw new Error('No robots created')
 
-    const minCost = Math.min(...step.map(({ cost }: DijkstraResults) => cost))
-    const shortestPath = step.filter(({ cost }: DijkstraResults) => cost === minCost).shift()
-    if (shortestPath !== undefined) {
-      shortestPath.path = shortestPath.path.filter(({ direction }: DijkstraNode) => direction !== undefined)
-      return shortestPath
-    }
-  }
-}
-
-const findOptimalKeypadSequence = (parts: string[], pad: string[][]): string[] => {
-  const keystrokes: string[][] = []
-
-  let startKey = 'A'
-
-  for (const key of parts) {
-    const start = findKeyPoint(pad, startKey)
-    const end = findKeyPoint(pad, key)
-    const shortestPath = findShortestPath(pad, start, end)
-
-    if (shortestPath !== undefined) {
-      const pathTokens = shortestPath.path.map(({ direction }: DijkstraNode) => directionToToken(direction))
-      keystrokes.push([...pathTokens, 'A'])
+  for (const code of codes) {
+    const result: SequenceResult = {
+      code,
+      numKeystrokes: 0,
     }
 
-    startKey = key
+    // if (code !== '539A') continue
+    for (const button of code.split('')) {
+      result.numKeystrokes += numberRobot.pressKey(button)
+    }
+
+    sequences.push(result)
+
+    numberRobot.resetKeypad()
   }
 
-  return keystrokes.flat()
+  return sumAllCodeComplexities(sequences)
 }
-
-const getCodeSequence = (code: string): SequenceResult => {
-  const codeParts = code.split('')
-  const sequence: string[][] = []
-
-  sequence.push(findOptimalKeypadSequence(codeParts, keypad))
-
-  const numDirpads = 2
-  for (let padIndex = 0; padIndex < numDirpads; padIndex++) {
-    const prevTaps = sequence[padIndex]
-    sequence.push(findOptimalKeypadSequence(prevTaps, dirpad))
-  }
-
-  return {
-    code,
-    sequence: sequence.pop()?.join('') ?? '',
-  }
-}
-
-const calcComplexity = (code: string, sequence: string): number => sequence.length * Number(code.replaceAll(/[A-Za-z]+/g, ''))
 
 export const run = async (params: RunParams) => {
   const solution: Solution = {
-    part1: params.isTest ? 126384 : undefined,
-    part2: params.isTest ? undefined : undefined,
+    part1: params.isTest ? 126384 : 231564,
+    part2: params.isTest ? 154115708116294 : 281212077733592,
   }
-
-  const sequences: SequenceResult[] = []
 
   const codes = (await getInput(params)).split('\n')
 
-  for (const code of codes) {
-    sequences.push(getCodeSequence(code))
-  }
-
-  for (const { code, sequence } of sequences) {
-    console.log({
-      code,
-      sequence,
-      length: sequence.length,
-    })
-  }
+  const numberKeypad = new Keypad(numbers)
+  const arrowKeypad = new Keypad(arrows)
 
   printAnswers({
     params,
-    answer1: sequences.map(({ code, sequence }: SequenceResult) => calcComplexity(code, sequence)).reduce((total: number, current: number) => (total += current), 0),
-    answer2: undefined,
+    answer1: runSolution(codes, 3, numberKeypad, arrowKeypad),
+    answer2: runSolution(codes, 26, numberKeypad, arrowKeypad),
     solution,
   })
 }

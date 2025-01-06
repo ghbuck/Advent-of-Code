@@ -4,7 +4,7 @@ export const directionToToken = (direction: Point | undefined): string => {
   let token = ''
 
   if (direction !== undefined) {
-    const cardinal = pointsToDirections.get(direction)
+    const cardinal = pointsToDirections.get(`${direction.x},${direction.y}`)
     if (cardinal !== undefined) {
       token = tokenDirections.get(cardinal) ?? ''
     }
@@ -14,5 +14,5 @@ export const directionToToken = (direction: Point | undefined): string => {
 }
 
 export const getCardinalDirection = (direction: Point | undefined): CardinalDirection => {
-  return (direction !== undefined ? pointsToDirections.get(direction) : undefined) ?? 'north'
+  return (direction !== undefined ? pointsToDirections.get(`${direction.x},${direction.y}`) : undefined) ?? 'north'
 }
