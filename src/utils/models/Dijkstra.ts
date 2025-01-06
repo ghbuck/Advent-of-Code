@@ -1,4 +1,14 @@
-import { CardinalDirection, Point, cardinalDirections, eastPrioritizedDirections, getCardinalDirection, northPrioritizedDirections, southPrioritizedDirections, tokenDirections, westPrioritizedDirections } from '@utils/dataTypes/index.js'
+import {
+  CardinalDirection,
+  Point,
+  cardinalDirections,
+  eastPrioritizedDirections,
+  getCardinalDirection,
+  northPrioritizedDirections,
+  southPrioritizedDirections,
+  tokenDirections,
+  westPrioritizedDirections,
+} from '@utils/dataTypes/index.js'
 import { isBetweenInclusive } from '@utils/maths/comparisons.js'
 import { PriorityQueue } from '@utils/models/PriorityQueue.js'
 
@@ -89,7 +99,17 @@ const getPrioritizedDirections = (firstDirection: Point | undefined): [CardinalD
   }
 }
 
-export const runDijkstra = <T>({ grid, start, end, turnCost = 0, turnCostCalculator, moveCostCalculator, freeSpace, blockedSpace, doAnimation }: DijkstraParams<T>): DijkstraResults[] => {
+export const runDijkstra = <T>({
+  grid,
+  start,
+  end,
+  turnCost = 0,
+  turnCostCalculator,
+  moveCostCalculator,
+  freeSpace,
+  blockedSpace,
+  doAnimation,
+}: DijkstraParams<T>): DijkstraResults[] => {
   const results: DijkstraResults[] = []
 
   const bounds: Point = {
@@ -190,7 +210,16 @@ function reconstructDijkstraPath(endNode: DijkstraNode, parentMap: Map<string, D
   return path.reverse()
 }
 
-export const findAllOptimalPaths = <T>({ grid, start, end, turnCost = 0, turnCostCalculator, moveCostCalculator, freeSpace, blockedSpace }: DijkstraParams<T>): DijkstraResults[] => {
+export const findAllOptimalPaths = <T>({
+  grid,
+  start,
+  end,
+  turnCost = 0,
+  turnCostCalculator,
+  moveCostCalculator,
+  freeSpace,
+  blockedSpace,
+}: DijkstraParams<T>): DijkstraResults[] => {
   const optimalPaths: DijkstraNodeV2[] = []
 
   const bounds: Point = {

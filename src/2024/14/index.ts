@@ -64,7 +64,16 @@ const calculateSafetyFactor = (grid: Grid<RobotInfo>): number => {
   for (let rowIndex = 0; rowIndex < rowCount; ++rowIndex) {
     for (let colIndex = 0; colIndex < colCount; ++colIndex) {
       const numRobots = grid.getCellItems({ x: colIndex, y: rowIndex })?.length ?? 0
-      const quadrantIndex = rowIndex < midY && colIndex < midX ? 0 : rowIndex < midY && colIndex > midX ? 1 : rowIndex > midY && colIndex < midX ? 2 : rowIndex > midY && colIndex > midX ? 3 : undefined
+      const quadrantIndex =
+        rowIndex < midY && colIndex < midX
+          ? 0
+          : rowIndex < midY && colIndex > midX
+            ? 1
+            : rowIndex > midY && colIndex < midX
+              ? 2
+              : rowIndex > midY && colIndex > midX
+                ? 3
+                : undefined
 
       if (quadrantIndex !== undefined) {
         quadrants[quadrantIndex] = quadrants[quadrantIndex] + numRobots
@@ -80,10 +89,12 @@ const runSimulation = async (grid: Grid<RobotInfo>, robotInfo: RobotInfo[], runT
   const gridWidth = bounds.getMaxX() + 1
   const gridHeight = bounds.getMaxY() + 1
 
-  return Promise.all(robotInfo.map((robot: RobotInfo) => simulateRobotMovement(gridWidth, gridHeight, robot, runTime))).then((simulatedRobots: RobotInfo[]) => {
-    simulatedRobots.forEach((robot: RobotInfo) => grid.putItem(robot, robot.position))
-    return grid
-  })
+  return Promise.all(robotInfo.map((robot: RobotInfo) => simulateRobotMovement(gridWidth, gridHeight, robot, runTime))).then(
+    (simulatedRobots: RobotInfo[]) => {
+      simulatedRobots.forEach((robot: RobotInfo) => grid.putItem(robot, robot.position))
+      return grid
+    },
+  )
 }
 
 export const run = async (params: RunParams) => {

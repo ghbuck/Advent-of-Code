@@ -140,7 +140,9 @@ const reorderFiles = (diskMap: number[]): number[] => {
 }
 
 const calculateChecksum = (diskData: number[]): number => {
-  return diskData.map((block: number, index: number) => index * (block < 0 ? 0 : block)).reduce((total: number, current: number) => (total += current), 0)
+  return diskData
+    .map((block: number, index: number) => index * (block < 0 ? 0 : block))
+    .reduce((total: number, current: number) => (total += current), 0)
 }
 
 export const run = async (params: RunParams) => {

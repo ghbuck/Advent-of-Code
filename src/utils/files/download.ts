@@ -30,7 +30,9 @@ const pickExampleBlock = async (choices: ExampleBlockChoice[]): Promise<string> 
   })
 
   const answer = await select({
-    message: kleur.cyan('Select the desired test input from the day’s page\n\tThe first item is the assumed right choice\n\t(it follows a paragraph with the words ‘your puzzle input’)'),
+    message: kleur.cyan(
+      'Select the desired test input from the day’s page\n\tThe first item is the assumed right choice\n\t(it follows a paragraph with the words ‘your puzzle input’)',
+    ),
     choices: choices,
   })
 
@@ -64,11 +66,16 @@ const parseHtmlStringForReadme = (day: number, year: number, htmlString: string)
   const readme = readFileSync(readmePath).toString()
   const readmeParts = readme.split(/^(?=## )/m).map((mainSection: string) => mainSection.split(/^(?=### )/m))
   const solutions = readmeParts[2]
-  const existingDays = solutions.map((section: string) => Number(section.substring(section.indexOf('Day ') + 4, section.indexOf(':')))).filter((day: number) => !isNaN(day))
+  const existingDays = solutions
+    .map((section: string) => Number(section.substring(section.indexOf('Day ') + 4, section.indexOf(':'))))
+    .filter((day: number) => !isNaN(day))
 
   const title = htmlString.match(/<h2>--- ?(Day \d+: .+?) ?---<\/h2>/)?.[1]
   if (title !== undefined && !existingDays.includes(day)) {
-    const newBodyPart = `### [${title}](https://adventofcode.com/${year}/day/${day})\n\n` + '#### $\\textsf{\\color{red}{Part 1:}}$\n\n' + '#### $\\textsf{\\color{green}{Part 2:}}$\n\n'
+    const newBodyPart =
+      `### [${title}](https://adventofcode.com/${year}/day/${day})\n\n` +
+      '#### $\\textsf{\\color{red}{Part 1:}}$\n\n' +
+      '#### $\\textsf{\\color{green}{Part 2:}}$\n\n'
 
     solutions.push(newBodyPart)
     solutions.sort((a: string, b: string) => {

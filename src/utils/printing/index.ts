@@ -3,7 +3,13 @@ import type { Answer, AnswerParams } from '@utils/dataTypes/index.js'
 import kleur from 'kleur'
 
 const checkAnswer = (answer: Answer, solution: Answer): string => {
-  return answer === undefined ? kleur.yellow('unrun') : answer === solution ? kleur.green('correct') : solution === undefined ? kleur.yellow('unsolved') : kleur.red('incorrect')
+  return answer === undefined
+    ? kleur.yellow('unrun')
+    : answer === solution
+      ? kleur.green('correct')
+      : solution === undefined
+        ? kleur.yellow('unsolved')
+        : kleur.red('incorrect')
 }
 
 export const printAnswers = ({ params: { year, day, part }, answer1, answer2, solution }: AnswerParams) => {

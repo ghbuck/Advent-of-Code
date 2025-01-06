@@ -61,7 +61,14 @@ export const aStar = <T>({ grid, start, goal, blockedSpace }: AStarParams<T>): A
 
     for (const neighbor of neighbors) {
       // Skip if out of bounds or in closed set
-      if (neighbor.x < 0 || neighbor.y < 0 || neighbor.x >= grid[0].length || neighbor.y >= grid.length || grid[neighbor.x][neighbor.y] === blockedSpace || closedSet.has(`${neighbor.x},${neighbor.y}`)) {
+      if (
+        neighbor.x < 0 ||
+        neighbor.y < 0 ||
+        neighbor.x >= grid[0].length ||
+        neighbor.y >= grid.length ||
+        grid[neighbor.x][neighbor.y] === blockedSpace ||
+        closedSet.has(`${neighbor.x},${neighbor.y}`)
+      ) {
         continue
       }
 

@@ -231,7 +231,9 @@ export class Grid<T> {
   //#region Cell methods
 
   getCellKey(point: Point): number | undefined {
-    return [...this.#cells.entries()].filter((entry: [number, Cell<T>]) => entry[1].point.x === point.x && entry[1].point.y === point.y).map((entry: [number, Cell<T>]) => entry[0])[0]
+    return [...this.#cells.entries()]
+      .filter((entry: [number, Cell<T>]) => entry[1].point.x === point.x && entry[1].point.y === point.y)
+      .map((entry: [number, Cell<T>]) => entry[0])[0]
   }
 
   /**
@@ -240,7 +242,9 @@ export class Grid<T> {
    * @returns {T[]} the items array, if it exists, otherwise `undefined`
    */
   getCellItems(point: Point): T[] | undefined {
-    return [...this.#cells.values()].filter((cell: Cell<T>) => cell.point.x === point.x && cell.point.y === point.y).map((cell: Cell<T>) => cell.items)[0]
+    return [...this.#cells.values()]
+      .filter((cell: Cell<T>) => cell.point.x === point.x && cell.point.y === point.y)
+      .map((cell: Cell<T>) => cell.items)[0]
   }
 
   getCellItemsByKey(cellKey: number): T[] | undefined {
@@ -292,7 +296,9 @@ export class Grid<T> {
       cellPoint = this.#cells.get(cellNum)?.point ?? { x: 0, y: 0 }
     } else {
       if (!this.#bounds.isInside(location)) {
-        throw new Error(kleur.red(`The requested point, ${JSON.stringify(location)}, is outside the bounds of the grid, ${JSON.stringify(this.#bounds.getMax())}.`))
+        throw new Error(
+          kleur.red(`The requested point, ${JSON.stringify(location)}, is outside the bounds of the grid, ${JSON.stringify(this.#bounds.getMax())}.`),
+        )
       }
 
       cellNum = this.getColumnCount() * location.y + location.x + 1
@@ -321,7 +327,9 @@ export class Grid<T> {
     if (typeof location === 'number') {
       cellNum = location
     } else {
-      cellNum = [...this.#cells.entries()].filter((entry: [number, Cell<T>]) => entry[1].point.x === location.x && entry[1].point.y === location.y).map((entry: [number, Cell<T>]) => entry[0])[0]
+      cellNum = [...this.#cells.entries()]
+        .filter((entry: [number, Cell<T>]) => entry[1].point.x === location.x && entry[1].point.y === location.y)
+        .map((entry: [number, Cell<T>]) => entry[0])[0]
     }
 
     const cell = this.#cells.get(cellNum)
@@ -338,7 +346,9 @@ export class Grid<T> {
    *
    */
   deleteItems(point: Point) {
-    const cellNum = [...this.#cells.entries()].filter((entry: [number, Cell<T>]) => entry[1].point.x === point.x && entry[1].point.y === point.y).map((entry: [number, Cell<T>]) => entry[0])[0]
+    const cellNum = [...this.#cells.entries()]
+      .filter((entry: [number, Cell<T>]) => entry[1].point.x === point.x && entry[1].point.y === point.y)
+      .map((entry: [number, Cell<T>]) => entry[0])[0]
     this.#cells.delete(cellNum)
   }
 

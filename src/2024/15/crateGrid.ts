@@ -24,7 +24,14 @@ interface ParsingResult {
   moves: MoveChars[]
 }
 
-const tryToMoveCrate = (grid: Grid<string>, nextPoint: Point, firstChar: string, move: MoveChars, deltas: Point, cratesToMove = new Set<string>()): Set<string> | null => {
+const tryToMoveCrate = (
+  grid: Grid<string>,
+  nextPoint: Point,
+  firstChar: string,
+  move: MoveChars,
+  deltas: Point,
+  cratesToMove = new Set<string>(),
+): Set<string> | null => {
   const leftColumn = firstChar === aBox ? nextPoint.x : nextPoint.x - 1
   const rightColumn = leftColumn + 1
 

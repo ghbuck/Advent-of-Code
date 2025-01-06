@@ -7,7 +7,8 @@ const checkNorth = (input: string[][], rowIndex: number, charIndex: number): Che
 }
 
 const checkNorthEast = (input: string[][], rowIndex: number, charIndex: number): CheckResult => {
-  const chars = input[rowIndex][charIndex] + input[rowIndex - 1][charIndex + 1] + input[rowIndex - 2][charIndex + 2] + input[rowIndex - 3][charIndex + 3]
+  const chars =
+    input[rowIndex][charIndex] + input[rowIndex - 1][charIndex + 1] + input[rowIndex - 2][charIndex + 2] + input[rowIndex - 3][charIndex + 3]
 
   return chars === 'XMAS' ? 1 : 0
 }
@@ -19,7 +20,8 @@ const checkEast = (input: string[][], rowIndex: number, charIndex: number): Chec
 }
 
 const checkSouthEast = (input: string[][], rowIndex: number, charIndex: number): CheckResult => {
-  const chars = input[rowIndex][charIndex] + input[rowIndex + 1][charIndex + 1] + input[rowIndex + 2][charIndex + 2] + input[rowIndex + 3][charIndex + 3]
+  const chars =
+    input[rowIndex][charIndex] + input[rowIndex + 1][charIndex + 1] + input[rowIndex + 2][charIndex + 2] + input[rowIndex + 3][charIndex + 3]
 
   return chars === 'XMAS' ? 1 : 0
 }
@@ -31,7 +33,8 @@ const checkSouth = (input: string[][], rowIndex: number, charIndex: number): Che
 }
 
 const checkSouthWest = (input: string[][], rowIndex: number, charIndex: number): CheckResult => {
-  const chars = input[rowIndex][charIndex] + input[rowIndex + 1][charIndex - 1] + input[rowIndex + 2][charIndex - 2] + input[rowIndex + 3][charIndex - 3]
+  const chars =
+    input[rowIndex][charIndex] + input[rowIndex + 1][charIndex - 1] + input[rowIndex + 2][charIndex - 2] + input[rowIndex + 3][charIndex - 3]
 
   return chars === 'XMAS' ? 1 : 0
 }
@@ -43,7 +46,8 @@ const checkWest = (input: string[][], rowIndex: number, charIndex: number): Chec
 }
 
 const checkNorthWest = (input: string[][], rowIndex: number, charIndex: number): CheckResult => {
-  const chars = input[rowIndex][charIndex] + input[rowIndex - 1][charIndex - 1] + input[rowIndex - 2][charIndex - 2] + input[rowIndex - 3][charIndex - 3]
+  const chars =
+    input[rowIndex][charIndex] + input[rowIndex - 1][charIndex - 1] + input[rowIndex - 2][charIndex - 2] + input[rowIndex - 3][charIndex - 3]
 
   return chars === 'XMAS' ? 1 : 0
 }

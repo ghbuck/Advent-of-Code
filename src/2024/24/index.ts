@@ -153,7 +153,8 @@ const createFullAdder = (halfAdder: HalfAdder, carryIn: Gate | undefined, gates:
   }
 }
 
-const hasInput = (gate1: Gate | undefined, gate2: Gate | undefined): boolean => gate1 !== undefined && gate2 !== undefined && gate1.inputs.includes(gate2.output)
+const hasInput = (gate1: Gate | undefined, gate2: Gate | undefined): boolean =>
+  gate1 !== undefined && gate2 !== undefined && gate1.inputs.includes(gate2.output)
 const outputStartsWith = (gate: Gate | undefined, value: string): boolean => gate !== undefined && gate.output.startsWith(value)
 
 const checkTheAdder = (adder: FullAdder, badWires: Set<string>) => {
@@ -201,7 +202,9 @@ const findBadWires = (gates: Gate[]): string => {
 
   // start by finding all gates that have an x wire and a y wire as inputs
   // and then sorting them by ascending order of the bit number of the x wire
-  const xyGates = gates.filter(({ inputs }: Gate) => inputs[0].startsWith('x') && inputs[1].startsWith('y')).sort((a: Gate, b: Gate) => a.inputs[0].localeCompare(b.inputs[0]))
+  const xyGates = gates
+    .filter(({ inputs }: Gate) => inputs[0].startsWith('x') && inputs[1].startsWith('y'))
+    .sort((a: Gate, b: Gate) => a.inputs[0].localeCompare(b.inputs[0]))
 
   for (let index = 0; index < xyGates.length; ++index) {
     // each bit should have two gates: an AND and an XOR
