@@ -3,10 +3,10 @@
  * Attempts to adjust the main file to work with crates just kept getting
  * more and more complicated. I finally gave up and just wrote a new file…
  */
+import { Point, cardinalDirections, tokensToDirections } from '@utils/dataTypes/index.js'
+import { Grid } from '@utils/models/Grid.js'
 
 import kleur from 'kleur'
-import { cardinalDirections, Point, tokensToDirections } from 'utils/dataTypes/index.js'
-import { Grid } from 'utils/models/Grid.js'
 
 //#region file globals
 

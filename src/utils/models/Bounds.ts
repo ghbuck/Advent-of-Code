@@ -1,4 +1,4 @@
-import { Point } from 'utils/dataTypes/index.js'
+import { Point } from '@utils/dataTypes/index.js'
 
 export interface IBounds {
   min?: Point

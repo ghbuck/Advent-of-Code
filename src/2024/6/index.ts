@@ -1,7 +1,7 @@
-import { Point, RunParams, Solution } from 'utils/dataTypes/index.js'
-import { getInput } from 'utils/files/index.js'
-import { isBetween } from 'utils/maths/index.js'
-import { printAnswers } from 'utils/printing/index.js'
+import { Point, RunParams, Solution } from '@utils/dataTypes/index.js'
+import { getInput } from '@utils/files/index.js'
+import { isBetween } from '@utils/maths/index.js'
+import { printAnswers } from '@utils/printing/index.js'
 
 const directions: number[][] = [
   [0, -1],

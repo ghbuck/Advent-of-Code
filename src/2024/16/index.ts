@@ -1,7 +1,7 @@
-import { cardinalDirections, Point, RunParams, Solution } from 'utils/dataTypes/index.js'
-import { getInput } from 'utils/files/index.js'
-import { DijkstraNode, DijkstraResults, findAllOptimalPaths } from 'utils/models/Dijkstra.js'
-import { printAnswers } from 'utils/printing/index.js'
+import { Point, RunParams, Solution, cardinalDirections } from '@utils/dataTypes/index.js'
+import { getInput } from '@utils/files/index.js'
+import { DijkstraNode, DijkstraResults, findAllOptimalPaths } from '@utils/models/Dijkstra.js'
+import { printAnswers } from '@utils/printing/index.js'
 
 const findCheapestPath = (grid: string[][]): DijkstraResults[] => {
   let start: Point = { x: 0, y: 0 }

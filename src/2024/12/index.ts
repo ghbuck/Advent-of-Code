@@ -1,7 +1,7 @@
-import { RunParams, Solution } from 'utils/dataTypes/index.js'
-import { getInput } from 'utils/files/index.js'
-import { Grid, RegionInfo, RegionResponse } from 'utils/models/Grid.js'
-import { printAnswers } from 'utils/printing/index.js'
+import { RunParams, Solution } from '@utils/dataTypes/index.js'
+import { getInput } from '@utils/files/index.js'
+import { Grid, RegionInfo, RegionResponse } from '@utils/models/Grid.js'
+import { printAnswers } from '@utils/printing/index.js'
 
 const getPlotMap = async (grid: Grid<string>, testValue?: string): Promise<RegionResponse<string>[]> => {
   const plotMap: RegionResponse<string>[] = []

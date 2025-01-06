@@ -1,5 +1,6 @@
+import type { Answer, AnswerParams } from '@utils/dataTypes/index.js'
+
 import kleur from 'kleur'
-import type { Answer, AnswerParams } from 'utils/dataTypes/index.js'
 
 const checkAnswer = (answer: Answer, solution: Answer): string => {
   return answer === undefined ? kleur.yellow('unrun') : answer === solution ? kleur.green('correct') : solution === undefined ? kleur.yellow('unsolved') : kleur.red('incorrect')

@@ -9,7 +9,7 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "paths": {
-      "utils/*": ["./src/utils/*"]
+      "@utils/*": ["./src/utils/*"]
     }
   },
   "exclude": ["node_modules"],

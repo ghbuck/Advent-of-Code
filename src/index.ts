@@ -1,8 +1,9 @@
+import { Day, PartNum, RunParams } from '@utils/dataTypes/index.js'
+import { createNewDay, setSessionId } from '@utils/files/index.js'
+import { printRunTime } from '@utils/printing/index.js'
+
 import kleur from 'kleur'
 import { performance } from 'perf_hooks'
-import { Day, PartNum, RunParams } from 'utils/dataTypes/index.js'
-import { createNewDay, setSessionId } from 'utils/files/index.js'
-import { printRunTime } from 'utils/printing/index.js'
 
 const defaultDate = new Date()
 let sessionId = ''

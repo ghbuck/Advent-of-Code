@@ -1,9 +1,10 @@
+import { CardinalDirection, Point, cardinalDirections, eastPrioritizedDirections, getCardinalDirection, northPrioritizedDirections, southPrioritizedDirections, tokenDirections, westPrioritizedDirections } from '@utils/dataTypes/index.js'
+import { isBetweenInclusive } from '@utils/maths/comparisons.js'
+import { PriorityQueue } from '@utils/models/PriorityQueue.js'
+
 import { clearScreen } from 'ansi-escapes'
 import kleur from 'kleur'
 import isEqual from 'lodash.isequal'
-import { CardinalDirection, cardinalDirections, eastPrioritizedDirections, getCardinalDirection, northPrioritizedDirections, Point, southPrioritizedDirections, tokenDirections, westPrioritizedDirections } from 'utils/dataTypes/index.js'
-import { isBetweenInclusive } from 'utils/maths/comparisons.js'
-import { PriorityQueue } from 'utils/models/PriorityQueue.js'
 
 export interface DijkstraNode {
   position: Point

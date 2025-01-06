@@ -1,7 +1,9 @@
+import { Point } from '@utils/dataTypes/index.js'
+import { Grid, IGrid } from '@utils/models/Grid.js'
+
 import { beforeEach, describe, expect, test } from '@jest/globals'
-import { Grid, IGrid } from 'utils/models/Grid.js'
+
 import { testStringGrid } from './testData/grid.js'
-import { Point } from 'utils/dataTypes/index.js'
 
 describe('Grid model tests', () => {
   const constructorArgs: IGrid<string> = {

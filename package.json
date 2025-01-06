@@ -41,6 +41,7 @@
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "@jest/globals": "^29.7.0",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.1",
     "@tsconfig/node-lts": "^22.0.1",
     "@types/lodash.isequal": "^4.5.8",
     "@types/node": "^22.10.5",

@@ -1,9 +1,10 @@
+import { Point, RunParams, Solution } from '@utils/dataTypes/index.js'
+import { getInput } from '@utils/files/index.js'
+import { Grid } from '@utils/models/Grid.js'
+import { printAnswers } from '@utils/printing/index.js'
+
 import { cursorBackward } from 'ansi-escapes'
 import kleur from 'kleur'
-import { Point, RunParams, Solution } from 'utils/dataTypes/index.js'
-import { getInput } from 'utils/files/index.js'
-import { Grid } from 'utils/models/Grid.js'
-import { printAnswers } from 'utils/printing/index.js'
 
 type Velocity = Point
 

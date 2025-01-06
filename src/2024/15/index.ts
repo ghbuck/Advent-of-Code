@@ -1,10 +1,12 @@
+import { Point, RunParams, Solution } from '@utils/dataTypes/index.js'
+import { getInput } from '@utils/files/index.js'
+import { DrawGridParams, Grid, NeighborLocation } from '@utils/models/Grid.js'
+import { printAnswers } from '@utils/printing/index.js'
+
+import { processCrateMovement } from './crateGrid.js'
+
 import { cursorBackward, cursorLeft, eraseEndLine, eraseLine } from 'ansi-escapes'
 import kleur from 'kleur'
-import { Point, RunParams, Solution } from 'utils/dataTypes/index.js'
-import { getInput } from 'utils/files/index.js'
-import { DrawGridParams, Grid, NeighborLocation } from 'utils/models/Grid.js'
-import { printAnswers } from 'utils/printing/index.js'
-import { processCrateMovement } from './crateGrid.js'
 
 //#region file globals
 

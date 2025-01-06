@@ -1,11 +1,13 @@
+import { RunParams } from '@utils/dataTypes/index.js'
+import { getSessionId } from '@utils/files/readWrite.js'
+
 import select from '@inquirer/select'
-import kleur from 'kleur'
-import 'mac-ca/register' // b/c ZScaler cert is not in node CA
-import { existsSync, readFileSync, writeFileSync } from 'node:fs'
-import { RunParams } from 'utils/dataTypes/index.js'
-import { getSessionId } from './readWrite.js'
-import { resolve } from 'node:path'
+
 import { cursorBackward, cursorLeft, eraseStartLine } from 'ansi-escapes'
+import kleur from 'kleur'
+import 'mac-ca/register'
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 
 const baseUrl = 'https://adventofcode.com'
 const userAgent = 'github.com/ghbuck/Advent-of-Code ; contact @ https://github.com/ghbuck/Advent-of-Code/issues/new'

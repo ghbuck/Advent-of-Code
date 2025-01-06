@@ -1,8 +1,9 @@
+import { RunParams } from '@utils/dataTypes/index.js'
+import { downloadExample, downloadInput } from '@utils/files/download.js'
+
 import kleur from 'kleur'
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { RunParams } from 'utils/dataTypes/index.js'
-import { downloadExample, downloadInput } from 'utils/files/download.js'
 
 const sessionIdPath = resolve('.', 'input', 'sessionId.txt')
 

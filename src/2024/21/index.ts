@@ -1,8 +1,9 @@
-import { RunParams, Solution } from 'utils/dataTypes/index.js'
-import { getInput } from 'utils/files/index.js'
-import { printAnswers } from 'utils/printing/index.js'
-import { Robot } from './Robot.js'
+import { RunParams, Solution } from '@utils/dataTypes/index.js'
+import { getInput } from '@utils/files/index.js'
+import { printAnswers } from '@utils/printing/index.js'
+
 import { Keypad } from './Keypad.js'
+import { Robot } from './Robot.js'
 
 interface SequenceResult {
   code: string

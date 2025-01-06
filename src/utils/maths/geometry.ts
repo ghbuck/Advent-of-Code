@@ -1,4 +1,4 @@
-import { Point } from 'utils/dataTypes/index.js'
+import { Point } from '@utils/dataTypes/index.js'
 
 export const findFourthPoint = (p1: Point, p2: Point, p3: Point): Point => {
   const midpoint = {

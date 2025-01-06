@@ -1,7 +1,8 @@
+import { Point } from '@utils/dataTypes/index.js'
+import { Bounds, IBounds } from '@utils/models/Bounds.js'
+
 import { clearScreen } from 'ansi-escapes'
 import kleur from 'kleur'
-import { Point } from 'utils/dataTypes/index.js'
-import { Bounds, IBounds } from 'utils/models/Bounds.js'
 
 export interface IGrid<T> {
   input: string

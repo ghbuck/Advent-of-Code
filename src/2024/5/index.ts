@@ -1,7 +1,7 @@
-import { RunParams, Solution } from 'utils/dataTypes/index.js'
-import { getInput } from 'utils/files/index.js'
-import { getIntersection } from 'utils/maths/index.js'
-import { printAnswers } from 'utils/printing/index.js'
+import { RunParams, Solution } from '@utils/dataTypes/index.js'
+import { getInput } from '@utils/files/index.js'
+import { getIntersection } from '@utils/maths/index.js'
+import { printAnswers } from '@utils/printing/index.js'
 
 interface RuleDef {
   before: Set<number>

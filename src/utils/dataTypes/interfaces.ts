@@ -1,4 +1,4 @@
-import { Answer, PartNum } from 'utils/dataTypes/index.js'
+import { Answer, PartNum } from '@utils/dataTypes/index.js'
 
 export interface RunParams {
   year: number

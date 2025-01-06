@@ -1,8 +1,9 @@
-import { RunParams, Solution } from 'utils/dataTypes/index.js'
-import { getInput } from 'utils/files/index.js'
-import { printAnswers } from 'utils/printing/index.js'
-import { checkForXMAS } from './xmasFunctions.js'
+import { RunParams, Solution } from '@utils/dataTypes/index.js'
+import { getInput } from '@utils/files/index.js'
+import { printAnswers } from '@utils/printing/index.js'
+
 import { checkForX_MAS } from './x-masFunctions.js'
+import { checkForXMAS } from './xmasFunctions.js'
 
 export const run = async (params: RunParams) => {
   const solution: Solution = {

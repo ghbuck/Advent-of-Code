@@ -1,6 +1,6 @@
-import { directionToToken } from 'utils/dataTypes/conversions.js'
-import { Point } from 'utils/dataTypes/index.js'
-import { findAllOptimalPaths, DijkstraNode } from 'utils/models/Dijkstra.js'
+import { directionToToken } from '@utils/dataTypes/conversions.js'
+import { Point } from '@utils/dataTypes/index.js'
+import { DijkstraNode, findAllOptimalPaths } from '@utils/models/Dijkstra.js'
 
 export class Keypad {
   #keys: Map<string, Point>

@@ -1,7 +1,7 @@
-import { bronKerbosch } from 'utils/algorithms/index.js'
-import { RunParams, Solution } from 'utils/dataTypes/index.js'
-import { getInput } from 'utils/files/index.js'
-import { printAnswers } from 'utils/printing/index.js'
+import { bronKerbosch } from '@utils/algorithms/index.js'
+import { RunParams, Solution } from '@utils/dataTypes/index.js'
+import { getInput } from '@utils/files/index.js'
+import { printAnswers } from '@utils/printing/index.js'
 
 const parseInputForMap = (input: string): Map<string, string[]> => {
   const baseArray = input.split('\n').map((line: string) => line.split('-'))

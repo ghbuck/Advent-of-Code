@@ -1,8 +1,8 @@
-import { RunParams, Solution } from 'utils/dataTypes/index.js'
-import { getInput } from 'utils/files/index.js'
-import { getManhattanDistance } from 'utils/maths/geometry.js'
-import { runDijkstra } from 'utils/models/Dijkstra.js'
-import { printAnswers } from 'utils/printing/index.js'
+import { RunParams, Solution } from '@utils/dataTypes/index.js'
+import { getInput } from '@utils/files/index.js'
+import { getManhattanDistance } from '@utils/maths/geometry.js'
+import { runDijkstra } from '@utils/models/Dijkstra.js'
+import { printAnswers } from '@utils/printing/index.js'
 
 const parseInput = (input: string): string[][] => {
   return input.split('\n').map((line) => line.split(''))
