@@ -33,7 +33,7 @@ const runSolution = (codes: string[], numRobots: number, numKeypad: Keypad, dirK
 
   for (let robotNumber = 1; robotNumber <= numRobots; ++robotNumber) {
     const keypad = robotNumber === numRobots ? numKeypad : dirKeypad
-    const nextRobot = new Robot(robotNumber, keypad, 'A', robot)
+    const nextRobot = new Robot(keypad, 'A', robot)
 
     robot = nextRobot
   }

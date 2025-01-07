@@ -7,7 +7,7 @@ export class Robot {
   #currentKey: string
   #costCache: Map<string, number>
 
-  constructor(id: number, keypad: Keypad, startingKey: string, delegate?: Robot) {
+  constructor(keypad: Keypad, startingKey: string, delegate?: Robot) {
     this.#startingKey = startingKey
     this.#currentKey = startingKey
 
