@@ -1,6 +1,6 @@
+import { aStar } from '@utils/algorithms/aStar.js'
 import { Point, RunParams, Solution } from '@utils/dataTypes/index.js'
 import { getInput } from '@utils/files/index.js'
-import { aStar } from '@utils/models/AStar.js'
 import { printAnswers } from '@utils/printing/index.js'
 
 const freeSpace = '.'
