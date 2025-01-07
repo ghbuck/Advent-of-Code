@@ -1,6 +1,7 @@
+import { findAllOptimalPaths } from '@utils/algorithms/Dijkstra/index.js'
+import { DijkstraNode, DijkstraResults } from '@utils/algorithms/Dijkstra/interfaces.js'
 import { Point, RunParams, Solution, cardinalDirections } from '@utils/dataTypes/index.js'
 import { getInput } from '@utils/files/index.js'
-import { DijkstraNode, DijkstraResults, findAllOptimalPaths } from '@utils/models/Dijkstra.js'
 import { printAnswers } from '@utils/printing/index.js'
 
 const findCheapestPath = (grid: string[][]): DijkstraResults[] => {
@@ -25,7 +26,6 @@ const findCheapestPath = (grid: string[][]): DijkstraResults[] => {
     turnCost: 1000,
     freeSpace: '.',
     blockedSpace: '#',
-    // doAnimation: true
   })
 }
 

@@ -1,6 +1,6 @@
+import { findAllOptimalPaths } from '@utils/algorithms/Dijkstra/index.js'
 import { directionToToken } from '@utils/dataTypes/conversions.js'
 import { Point } from '@utils/dataTypes/index.js'
-import { DijkstraNode, findAllOptimalPaths } from '@utils/models/Dijkstra.js'
 
 export class Keypad {
   #keys: Map<string, Point>
@@ -38,7 +38,7 @@ export class Keypad {
             const paths = pathMap.get(`${key1},${key2}`) ?? []
 
             for (const pathInfo of pathsToKey) {
-              const path = pathInfo.path.map(({ direction }: DijkstraNode) => directionToToken(direction))
+              const path = pathInfo.path.map(({ direction }) => directionToToken(direction))
               paths.push(path.join('') + 'A')
             }
 

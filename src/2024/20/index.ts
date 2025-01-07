@@ -1,7 +1,7 @@
+import { findPaths } from '@utils/algorithms/Dijkstra/index.js'
 import { RunParams, Solution } from '@utils/dataTypes/index.js'
 import { getInput } from '@utils/files/index.js'
 import { getManhattanDistance } from '@utils/maths/geometry.js'
-import { runDijkstra } from '@utils/models/Dijkstra.js'
 import { printAnswers } from '@utils/printing/index.js'
 
 const parseInput = (input: string): string[][] => {
@@ -14,7 +14,7 @@ const findNumberOfCheats = (grid: string[][], minTimeSaved: number, maxCheatTime
   const cheatMoveCost = 2
 
   // there's only one path, so these are the baseline values
-  const { path } = runDijkstra({
+  const { path } = findPaths({
     grid,
     start: 'S',
     end: 'E',
