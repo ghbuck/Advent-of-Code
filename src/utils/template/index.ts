@@ -3,7 +3,7 @@ import { getInput } from '@utils/files/index.js'
 import { printAnswers } from '@utils/printing/index.js'
 
 const parseInput = (input: string): string[][] => {
-  const baseArray = input.split('\n\n').map((line: string) => line.split(''))
+  const baseArray = input.split('\n').map((line: string) => line.split(''))
   return baseArray
 }
 
