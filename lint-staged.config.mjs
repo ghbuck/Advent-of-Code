@@ -1,3 +1,3 @@
 export default {
-    '*.ts': ['prettier --ignore-path .gitignore --write', 'eslint --fix'],
+    '*.(js|ts|json)': ['npm run format', 'npm run lint'],
   }
