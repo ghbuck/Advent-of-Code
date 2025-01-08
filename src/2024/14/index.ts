@@ -97,6 +97,13 @@ const runSimulation = async (grid: Grid<RobotInfo>, robotInfo: RobotInfo[], runT
   )
 }
 
+const getSafetyFactor = async (inputString: string, isTest: boolean): Promise<number> => {
+  const part1Robots = parseInput(inputString)
+  let grid = await runSimulation(makeGrid(isTest), part1Robots, 100)
+
+  return calculateSafetyFactor(grid)
+}
+
 export const run = async (params: RunParams) => {
   const solution: Solution = {
     part1: params.isTest ? 12 : 228410028,
@@ -105,26 +112,30 @@ export const run = async (params: RunParams) => {
 
   const inputString = await getInput(params)
 
-  const part1Robots = parseInput(inputString)
-  let grid = await runSimulation(makeGrid(params.isTest), part1Robots, 100)
-
-  const safteyFactor = calculateSafetyFactor(grid)
-
-  let runTime = 0
-  let treeFound = false
-
-  process.stdout.write(kleur.green('Searching for the christmas tree…\nAttempt:    0'))
-  while (!treeFound) {
-    process.stdout.write(cursorBackward(`${runTime}`.length) + runTime)
-
-    const part2Robots = parseInput(inputString)
-
-    grid = await runSimulation(makeGrid(params.isTest), part2Robots, ++runTime)
-    treeFound = grid.clusteredWithinDistance(50)
+  let safteyFactor: number | undefined
+  if (params.part === 1 || params.part === 'all') {
+    safteyFactor = await getSafetyFactor(inputString, params.isTest)
   }
 
-  if (treeFound) {
-    grid.drawGrid({ replacer: '\\d' })
+  let runTime: number | undefined
+  if (params.part === 2 || params.part === 'all') {
+    let runTime = 0
+    let treeFound = false
+    let grid: Grid<RobotInfo> | undefined
+
+    process.stdout.write(kleur.green('Searching for the christmas tree…\nAttempt:    0'))
+    while (!treeFound) {
+      process.stdout.write(cursorBackward(`${runTime}`.length) + runTime)
+
+      const part2Robots = parseInput(inputString)
+
+      grid = await runSimulation(makeGrid(params.isTest), part2Robots, ++runTime)
+      treeFound = grid.clusteredWithinDistance(50)
+    }
+
+    if (treeFound && grid !== undefined) {
+      grid.drawGrid({ replacer: '\\d' })
+    }
   }
 
   printAnswers({
