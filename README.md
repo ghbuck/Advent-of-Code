@@ -44,3 +44,12 @@ The session id is a cookie value set by logging into <https://adventofcode.com>.
 ### Linting and formatting
 
 You can run these commands separately, but I've added [lint-staged](https://www.npmjs.com/package/lint-staged) as a dev dependency so for any files you stage it will run both commands before committing. If there are any errors thrown it will disallow committing until rectified. (This is where running the lint command manually comes in handy)
+
+## TODO
+
+- 2024
+  - day 7 part 2 got messed up…
+  - day 14 part 2 is slow (10s)
+  - day 15 is slow (6s)
+  - day 16 is veeery slow (24s)
+  - day 18 is slow (8s)
