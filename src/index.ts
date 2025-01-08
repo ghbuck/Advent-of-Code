@@ -3,7 +3,7 @@ import { createNewDay, setSessionId } from '@utils/files/index.js'
 import { printRunTime } from '@utils/printing/index.js'
 
 import kleur from 'kleur'
-import { performance } from 'node:perf_hooks'
+import { performance } from 'perf_hooks'
 
 const defaultDate = new Date()
 let sessionId = ''
