@@ -1,14 +1,14 @@
-import { createDefaultEsmPreset } from 'ts-jest';
+import { createDefaultEsmPreset } from 'ts-jest'
 
 /** @type {import('ts-jest').JestConfigWithTsJest} **/
 export default {
   ...createDefaultEsmPreset(),
-  testEnvironment: "node",
+  testEnvironment: 'node',
   transform: {
-    "^.+.tsx?$": ["ts-jest",{}],
+    '^.+.tsx?$': ['ts-jest', {}],
   },
   moduleNameMapper: {
-    "^utils/(.*)$": "<rootDir>/src/utils/$1",
+    '^utils/(.*)$': '<rootDir>/src/utils/$1',
   },
-  resolver: "ts-jest-resolver",
-};
+  resolver: 'ts-jest-resolver',
+}

@@ -1,3 +1,3 @@
 export default {
-    '*.(js|ts|json)': ['npm run format', 'npm run lint'],
-  }
+  '*.(m?js|ts|json)': ['npm run format', 'npm run lint'],
+}
