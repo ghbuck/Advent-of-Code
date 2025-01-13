@@ -4,8 +4,9 @@
  * more and more complicated. I finally gave up and just wrote a new file…
  */
 import { Point, cardinalDirections, tokensToDirections } from '@utils/dataTypes/index.js'
-import { Grid } from '@utils/models/Grid.js'
+import { DrawGridParams, Grid } from '@utils/models/Grid.js'
 
+import { cursorBackward, cursorLeft, eraseEndLine, eraseLine } from 'ansi-escapes'
 import kleur from 'kleur'
 
 //#region file globals
@@ -79,11 +80,25 @@ const tryToMoveCrate = (
   return cratesToMove
 }
 
-export const processCrateMovement = ({ grid, moves }: ParsingResult): Grid<string> => {
+export const processCrateMovement = ({ grid, moves }: ParsingResult, drawParams: DrawGridParams<string>, isTest: boolean): Grid<string> => {
   let robotLocation = grid.findPoint(robot)
   if (robotLocation === undefined) throw new Error(kleur.red('Robot location not found'))
 
-  for (const move of moves) {
+  let cursorLength = `${moves.length}`.length
+  if (isTest) {
+    grid.drawGrid(drawParams)
+  } else {
+    process.stdout.write(kleur.green(`Crate moves remaining: ${moves.length}`))
+  }
+
+  while (moves.length > 0) {
+    const move = moves.shift() ?? '^'
+
+    if (!isTest) {
+      process.stdout.write(cursorBackward(cursorLength) + eraseEndLine + `${moves.length}`)
+      cursorLength = `${moves.length}`.length
+    }
+
     const direction = tokensToDirections.get(move) ?? 'north'
     const deltas = cardinalDirections.get(direction) ?? { x: 0, y: -1 }
 
@@ -117,6 +132,10 @@ export const processCrateMovement = ({ grid, moves }: ParsingResult): Grid<strin
     grid.deleteItem(robot, robotLocation)
     grid.putItem(robot, nextPoint)
     robotLocation = nextPoint
+  }
+
+  if (!isTest) {
+    process.stdout.write(eraseLine + cursorLeft)
   }
 
   return grid

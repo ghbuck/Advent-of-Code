@@ -13,8 +13,7 @@ import kleur from 'kleur'
 const robot = '@'
 const aWall = '#'
 
-let aBox = 'O'
-const aBox1 = ']'
+const aBox = 'O'
 
 const drawParams: DrawGridParams<string> = {
   onlyTopItem: true,
@@ -129,58 +128,6 @@ const moveBoxes = (params: MoveParams): Point => {
   return robotDest
 }
 
-const moveCratesHorizontally = (params: MoveParams, crateDest: Point) => {
-  for (let itemNum = 1; itemNum <= params.numItems; ++itemNum) {
-    const crateOrigin: Point = {
-      x: crateDest.x - params.deltas.x,
-      y: crateDest.y,
-    }
-
-    const item = params.grid.getCellItems(crateOrigin)?.[0]
-
-    if (item !== undefined) {
-      params.grid.deleteItem(item, crateOrigin)
-      params.grid.putItem(item, crateDest)
-    }
-
-    crateDest = crateOrigin
-  }
-}
-
-const moveCratesVertically = (params: MoveParams, crateDest: Point) => {
-  for (let itemNum = 1; itemNum <= params.numItems; ++itemNum) {
-    const crateOrigin: Point = {
-      x: crateDest.x - params.deltas.x,
-      y: crateDest.y,
-    }
-
-    const item = params.grid.getCellItems(crateOrigin)?.[0]
-
-    if (item !== undefined) {
-      params.grid.deleteItem(item, crateOrigin)
-      params.grid.putItem(item, crateDest)
-    }
-
-    crateDest = crateOrigin
-  }
-}
-
-const moveCrates = (params: MoveParams): Point => {
-  const [robotDest, crateDest] = getDestinations(params)
-
-  if (params.move === '<' || params.move === '>') {
-    moveCratesHorizontally(params, crateDest)
-  } else {
-    moveCratesVertically(params, crateDest)
-  }
-
-  if (params.isTest) {
-    params.grid.drawGrid(drawParams)
-  }
-
-  return robotDest
-}
-
 const moveRobot = (grid: Grid<string>, robotLocation: Point, newLocation: Point, isTest: boolean): Point => {
   grid.deleteItem(robot, robotLocation)
   grid.putItem(robot, newLocation)
@@ -192,11 +139,7 @@ const moveRobot = (grid: Grid<string>, robotLocation: Point, newLocation: Point,
   return newLocation
 }
 
-const processMovement = ({ grid, moves }: ParsingResult, isRun2: boolean, isTest: boolean): Grid<string> => {
-  if (isRun2) {
-    aBox = '['
-  }
-
+const processMovement = ({ grid, moves }: ParsingResult, isTest: boolean): Grid<string> => {
   let robotLocation = grid.findPoint(robot)
   if (robotLocation === undefined) throw new Error(kleur.red('Robot location not found'))
 
@@ -204,7 +147,7 @@ const processMovement = ({ grid, moves }: ParsingResult, isRun2: boolean, isTest
   if (isTest) {
     grid.drawGrid(drawParams)
   } else {
-    process.stdout.write(kleur.green(`Moves remaining: ${moves.length}`))
+    process.stdout.write(kleur.green(`Box moves remaining: ${moves.length}`))
   }
 
   while (moves.length > 0) {
@@ -226,7 +169,7 @@ const processMovement = ({ grid, moves }: ParsingResult, isRun2: boolean, isTest
     let numBoxes = 0
     const keysToMove: number[][] = []
 
-    if (destItem !== undefined && (destItem === aBox || destItem === aBox1)) {
+    if (destItem !== undefined && destItem === aBox) {
       let nextKeys = [destKey]
       let nextItems: (string | undefined)[] = [destItem]
 
@@ -235,7 +178,7 @@ const processMovement = ({ grid, moves }: ParsingResult, isRun2: boolean, isTest
 
         nextKeys = nextKeys.map((key: number) => (key += keyDelta))
         nextItems = nextKeys.map((key: number) => grid.getCellItemsByKey(key)?.[0])
-      } while (nextItems.includes(aBox) || nextItems.includes(aBox1))
+      } while (nextItems.includes(aBox))
 
       canMove = !nextItems.includes(aWall)
       numBoxes = keysToMove.length
@@ -256,11 +199,7 @@ const processMovement = ({ grid, moves }: ParsingResult, isRun2: boolean, isTest
     }
 
     if (canMove && numBoxes > 0) {
-      if (isRun2) {
-        robotDest = moveCrates(moveParams)
-      } else {
-        robotDest = moveBoxes(moveParams)
-      }
+      robotDest = moveBoxes(moveParams)
     } else if (canMove) {
       ;[robotDest] = getDestinations(moveParams)
     }
@@ -293,7 +232,7 @@ export const run = async (params: RunParams) => {
   let part1Answer: number | undefined
   if (params.part === 'all' || params.part === 1) {
     const result1 = await parseInput(params, false)
-    const grid1 = processMovement(result1, false, params.isTest)
+    const grid1 = processMovement(result1, params.isTest)
 
     part1Answer = getBoxesGpsScore(grid1, aBox)
   }
@@ -301,7 +240,7 @@ export const run = async (params: RunParams) => {
   let part2Answer: number | undefined
   if (params.part === 'all' || params.part === 2) {
     const result2 = await parseInput(params, true)
-    const grid2 = processCrateMovement(result2)
+    const grid2 = processCrateMovement(result2, drawParams, params.isTest)
 
     part2Answer = getBoxesGpsScore(grid2, '[')
   }
