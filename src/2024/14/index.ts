@@ -3,7 +3,7 @@ import { getInput } from '@utils/files/index.js'
 import { Grid } from '@utils/models/Grid.js'
 import { printAnswers } from '@utils/printing/index.js'
 
-import { cursorBackward } from 'ansi-escapes'
+import { cursorBackward, cursorPrevLine, eraseLine } from 'ansi-escapes'
 import kleur from 'kleur'
 
 type Velocity = Point
@@ -99,7 +99,7 @@ const runSimulation = async (grid: Grid<RobotInfo>, robotInfo: RobotInfo[], runT
 
 const getSafetyFactor = async (inputString: string, isTest: boolean): Promise<number> => {
   const part1Robots = parseInput(inputString)
-  let grid = await runSimulation(makeGrid(isTest), part1Robots, 100)
+  const grid = await runSimulation(makeGrid(isTest), part1Robots, 100)
 
   return calculateSafetyFactor(grid)
 }
@@ -119,7 +119,8 @@ export const run = async (params: RunParams) => {
 
   let runTime: number | undefined
   if (params.part === 2 || params.part === 'all') {
-    let runTime = 0
+    runTime = 0
+
     let treeFound = false
     let grid: Grid<RobotInfo> | undefined
 
@@ -133,7 +134,9 @@ export const run = async (params: RunParams) => {
       treeFound = grid.clusteredWithinDistance(50)
     }
 
-    if (treeFound && grid !== undefined) {
+    process.stdout.write(eraseLine + cursorPrevLine + eraseLine)
+
+    if (treeFound && grid !== undefined && params.other?.drawTree === 'true') {
       grid.drawGrid({ replacer: '\\d' })
     }
   }
