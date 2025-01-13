@@ -58,6 +58,9 @@ export const run = async (params: RunParams) => {
   const locksAndKeys = parseInput(await getInput(params))
   const numberOfFits = findLockAndKeyFits(locksAndKeys)
 
+  // there is no part 2 for this day
+  params.part = 1
+
   printAnswers({
     params,
     answer1: numberOfFits,
