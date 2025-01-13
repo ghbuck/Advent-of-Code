@@ -236,12 +236,8 @@ For a further walkthough see the comments in [`findBadWires`](src/2024/../../24/
 
 ### [Day 25: Code Chronicle](https://adventofcode.com/2024/day/25)
 
-Having never made it this far before, I'm not sure yet about part 2. But I'm going to commit this part 1 and write up now in order to commemorate my confusion. 😂
+Having never made it this far before, I'm not sure yet about part 2 (_ed: there was not_). But I'm going to commit this part 1 and write up now in order to commemorate my confusion. 😂
 
 #### $\textsf{\color{red}{Part 1: A basic math problem}}$
 
 Quite a simple problem. You just need to make sure that there is no over lap in pins and key. So I chose to make the pins stalagtites with a negative value and the key teeth stalagmites with a positive value and as long as their sum is less than or equal to zero across all five pin/teeth combos we're good to go.
-
-#### $\textsf{\color{green}{Part 2:}}$
-
-We'll see…
