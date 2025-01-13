@@ -14,7 +14,11 @@ The code in this repository follows the [automation guidelines on the /r/advento
 
 ## Commands
 
+The primary script is `start`. You can run `npm start` with just a day number, e.g.: `npm start 1`, or `npm start all` to run all days for the current year. The others are self explanatory
+
 ```bash
+npm start [day number]
+npm start all
 npm start -- [RunParams]
 npm run newday -- [RunParams]
 npm run session -- [AoC.com session cookie value]
@@ -24,11 +28,16 @@ npm run format
 
 ### RunParams
 
+> [!NOTE]
+> The `-o`|`--other` flag must be the last flag of the command as the logic consumes the rest of the arguments as space delineated `key:value` pairs.
+
 ```bash
   -y \d{4}   --year \d{4}    The year to run (default: current year)
   -d \d{1,2} --day  \d{1,2}  The day to run (default: current day num)
   -p \d      --part \d       The solution to run (defaults to 'all')
   -t \d      --test \d       Flag to run with the test data (add a number if the day has more than one)
+             --all           To run all days in conjuction with a `year` parameter
+  -o x:y etc --other x:y     To pass random `other` parameters into a day
 ```
 
 ## Yearly READMEs
@@ -48,7 +57,6 @@ You can run these commands separately, but I've added [lint-staged](https://www.
 ## TODO
 
 - 2024
-  - day 7 part 2 got messed up…
   - day 14 part 2 is slow (10s)
   - day 15 is slow (6s)
   - day 16 is veeery slow (24s)
