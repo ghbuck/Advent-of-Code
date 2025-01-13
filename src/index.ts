@@ -55,6 +55,13 @@ for (const [index, arg] of args.entries()) {
     case '--all':
       doAllDays = true
       break
+    case '-o':
+    case '--other':
+      params.other = args.slice(index + 1).reduce((final, arg) => {
+        const items = arg.split(':')
+        return { ...final, [items[0]]: items[1] }
+      }, {})
+      break
     case '--newday':
       params.createNewDay = true
       break

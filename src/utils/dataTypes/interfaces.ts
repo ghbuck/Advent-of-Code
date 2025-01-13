@@ -8,6 +8,7 @@ export interface RunParams {
   testPart: number
   createNewDay: boolean
   saveSessionId: boolean
+  other?: Record<string, string>
 }
 
 export interface Day {
