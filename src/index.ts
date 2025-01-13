@@ -18,6 +18,8 @@ const params: RunParams = {
   saveSessionId: false,
 }
 
+let doAllDays = false
+
 const args = process.argv.slice(2)
 
 for (const [index, arg] of args.entries()) {
@@ -48,6 +50,10 @@ for (const [index, arg] of args.entries()) {
       if (!isNaN(Number(nextArg))) {
         params.testPart = Number(nextArg)
       }
+      break
+    case 'all':
+    case '--all':
+      doAllDays = true
       break
     case '--newday':
       params.createNewDay = true
@@ -84,5 +90,14 @@ if (params.createNewDay) {
 } else if (params.saveSessionId) {
   setSessionId(sessionId)
 } else {
-  await runDay(params)
+  let days: number[] = []
+  if (doAllDays) {
+    days = Array.from({ length: 25 }, (_, i) => i + 1)
+  } else {
+    days.push(params.day)
+  }
+
+  for (const day of days) {
+    await runDay({ ...params, day })
+  }
 }
