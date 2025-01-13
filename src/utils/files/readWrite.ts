@@ -6,6 +6,7 @@ import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from
 import { resolve } from 'node:path'
 
 const sessionIdPath = resolve('.', 'input', 'sessionId.txt')
+const lastRequestTimestampPath = resolve('.', 'input', 'lastRequestTimestamp.txt')
 
 export const getSessionId = (): string => {
   return readFileSync(sessionIdPath).toString()
@@ -13,6 +14,18 @@ export const getSessionId = (): string => {
 
 export const setSessionId = (sessionId: string) => {
   writeFileSync(sessionIdPath, sessionId)
+}
+
+export const getLastRequestTimestamp = (): number => {
+  try {
+    return Number(readFileSync(lastRequestTimestampPath).toString())
+  } catch {
+    return NaN
+  }
+}
+
+export const setLastRequestTimestamp = (timestamp: number) => {
+  writeFileSync(lastRequestTimestampPath, `${timestamp}`)
 }
 
 export const createNewDay = async (params: RunParams) => {

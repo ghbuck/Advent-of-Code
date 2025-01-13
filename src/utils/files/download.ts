@@ -1,5 +1,5 @@
 import { RunParams } from '@utils/dataTypes/index.js'
-import { getSessionId } from '@utils/files/readWrite.js'
+import { getLastRequestTimestamp, getSessionId, setLastRequestTimestamp } from '@utils/files/readWrite.js'
 
 import select from '@inquirer/select'
 
@@ -11,6 +11,7 @@ import { resolve } from 'node:path'
 
 const baseUrl = 'https://adventofcode.com'
 const userAgent = 'github.com/ghbuck/Advent-of-Code ; contact @ https://github.com/ghbuck/Advent-of-Code/issues/new'
+const minRequestInterval = 60000
 
 //#region private
 
@@ -52,6 +53,40 @@ const getRequestHeaders = (): RequestInit => {
       'User-Agent': userAgent,
     },
   }
+}
+
+const canMakeRequest = (now: number): boolean => {
+  const lastRequestTimestamp = getLastRequestTimestamp()
+
+  let canMakeRequest = isNaN(lastRequestTimestamp)
+
+  let timeDiff = now
+  if (!canMakeRequest) {
+    timeDiff = now - lastRequestTimestamp
+    canMakeRequest = timeDiff > minRequestInterval
+  }
+
+  if (!canMakeRequest) {
+    console.log(
+      kleur.red(`You are making requests too quickly. Please wait ${Math.floor((minRequestInterval - timeDiff) / 1000)}s before trying again.`),
+    )
+    process.exit(1)
+  }
+
+  return canMakeRequest
+}
+
+const makeFetchRequest = async (url: string): Promise<string> => {
+  let output = ''
+
+  if (canMakeRequest(Date.now())) {
+    const response = await fetch(url, getRequestHeaders())
+    output = await response.text()
+
+    setLastRequestTimestamp(Date.now())
+  }
+
+  return output
 }
 
 const parseHtmlStringForReadme = (day: number, year: number, htmlString: string) => {
@@ -103,8 +138,7 @@ export const downloadExample = async ({ day, year }: RunParams): Promise<string>
   let input = ''
 
   try {
-    const response = await fetch(`${baseUrl}/${year}/day/${day}`, getRequestHeaders())
-    const htmlString = await response.text()
+    const htmlString = await makeFetchRequest(`${baseUrl}/${year}/day/${day}`)
 
     parseHtmlStringForReadme(day, year, htmlString)
 
@@ -138,9 +172,7 @@ export const downloadInput = async ({ day, year }: RunParams): Promise<string> =
   let input = ''
 
   try {
-    const response = await fetch(`${baseUrl}/${year}/day/${day}/input`, getRequestHeaders())
-
-    input = await response.text()
+    input = await makeFetchRequest(`${baseUrl}/${year}/day/${day}/input`)
   } catch (error) {
     console.error(error)
   }
@@ -166,8 +198,7 @@ export const catchUpReadmeSections = async (year: number): Promise<void> => {
 
   for (const day of dayRange) {
     if (!existingDays.includes(day)) {
-      const response = await fetch(`${baseUrl}/${year}/day/${day}`, getRequestHeaders())
-      const htmlString = await response.text()
+      const htmlString = await makeFetchRequest(`${baseUrl}/${year}/day/${day}`)
 
       parseHtmlStringForReadme(day, year, htmlString)
 
