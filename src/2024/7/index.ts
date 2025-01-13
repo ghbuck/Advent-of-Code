@@ -14,26 +14,26 @@ interface LineItem {
 const operationsCanMakeTotal = (line: LineItem, doConcat: boolean): boolean => {
   const numbers = line.numbers
 
-  const dp: Set<number>[] = Array(numbers.length + 1)
+  const dp: Set<number>[] = Array(numbers.length)
     .fill(null)
     .map(() => new Set<number>())
 
-  dp[0].add(0)
+  dp[0].add(numbers[0])
 
-  for (let index = 0; index < numbers.length; ++index) {
+  for (let index = 1; index < numbers.length; ++index) {
     const currentValue = numbers[index]
 
-    for (const tableValue of dp[index]) {
-      dp[index + 1].add(tableValue + currentValue)
-      dp[index + 1].add(tableValue * currentValue)
+    for (const tableValue of dp[index - 1]) {
+      dp[index].add(tableValue + currentValue)
+      dp[index].add(tableValue * currentValue)
 
       if (doConcat) {
-        dp[index + 1].add(Number(`${tableValue}${currentValue}`))
+        dp[index].add(Number(`${tableValue}${currentValue}`))
       }
     }
   }
 
-  return Array.from(dp[numbers.length]).includes(line.total)
+  return dp[dp.length - 1].has(line.total)
 }
 
 const getTotalCalibrationResult = (lines: LineItem[], doConcat: boolean): number => {
@@ -65,8 +65,8 @@ export const run = async (params: RunParams) => {
 
   printAnswers({
     params,
-    answer1: getTotalCalibrationResult(lines, false),
-    answer2: getTotalCalibrationResult(lines, true),
+    answer1: params.part === 1 || params.part === 'all' ? getTotalCalibrationResult(lines, false) : undefined,
+    answer2: params.part === 2 || params.part === 'all' ? getTotalCalibrationResult(lines, true) : undefined,
     solution,
   })
 }
