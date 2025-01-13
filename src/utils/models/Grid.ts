@@ -682,8 +682,13 @@ export class Grid<T> {
     let totalDistance = 0
     let comparisons = 0
 
-    for (const cell1 of this.#cells.values()) {
-      for (const cell2 of this.#cells.values()) {
+    const sortedEntries = [...this.#cells.entries()].sort((a, b) => a[0] - b[0])
+
+    for (let index1 = 0; index1 < sortedEntries.length; ++index1) {
+      const cell1 = sortedEntries[index1][1]
+      for (let index2 = index1 + 1; index2 < sortedEntries.length; ++index2) {
+        const cell2 = sortedEntries[index2][1]
+
         totalDistance += Math.abs(cell2.point.x - cell1.point.x) + Math.abs(cell2.point.y - cell1.point.y)
         ++comparisons
       }

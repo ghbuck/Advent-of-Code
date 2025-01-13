@@ -58,6 +58,5 @@ You can run these commands separately, but I've added [lint-staged](https://www.
 
 - 2024
   - complete 2024 README
-  - day 14 part 2 is slow (10s)
   - day 15 is slow (6s)
   - day 18 is slow (8s)
