@@ -68,7 +68,8 @@ for (const [index, arg] of args.entries()) {
     case '--session':
       params.saveSessionId = true
       if (nextArg === undefined || !(nextArg.length > 100)) {
-        throw new Error(kleur.red('No session id value found in `process.argv`'))
+        console.log(kleur.red('No session id value found in `process.argv`'))
+        process.exit(1)
       }
       sessionId = nextArg
       break

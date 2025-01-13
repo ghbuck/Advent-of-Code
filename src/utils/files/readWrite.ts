@@ -89,7 +89,8 @@ export const getInput = async (params: RunParams): Promise<string> => {
   }
 
   if (input === undefined || input === '') {
-    throw new Error(kleur.red(`Unable to download or read from cache the input for ${params.year} day ${params.day}`))
+    console.log(kleur.red(`Unable to download or read from cache the input for ${params.year} day ${params.day}`))
+    process.exit(1)
   }
 
   return input
