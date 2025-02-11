@@ -33,26 +33,26 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@inquirer/select": "^4.0.4",
+    "@inquirer/select": "^4.0.8",
     "ansi-escapes": "^7.0.0",
     "kleur": "^4.1.5",
-    "mac-ca": "^3.1.0"
+    "mac-ca": "^3.1.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.17.0",
+    "@eslint/js": "^9.20.0",
     "@jest/globals": "^29.7.0",
-    "@trivago/prettier-plugin-sort-imports": "^5.2.1",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@tsconfig/node-lts": "^22.0.1",
-    "@types/node": "^22.10.5",
-    "eslint": "^9.17.0",
-    "eslint-config-prettier": "^9.1.0",
+    "@types/node": "^22.13.1",
+    "eslint": "^9.20.1",
+    "eslint-config-prettier": "^10.0.1",
     "husky": "^9.1.7",
-    "lint-staged": "^15.3.0",
-    "prettier": "^3.4.2",
+    "lint-staged": "^15.4.3",
+    "prettier": "^3.5.0",
     "ts-jest": "^29.2.5",
     "ts-jest-resolver": "^2.0.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
-    "typescript-eslint": "^8.19.1"
+    "typescript-eslint": "^8.24.0"
   }
 }
