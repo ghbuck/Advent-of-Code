@@ -36,7 +36,7 @@ npm run format
   -d \d{1,2} --day  \d{1,2}  The day to run (default: current day num)
   -p \d      --part \d       The solution to run (defaults to 'all')
   -t \d      --test \d       Flag to run with the test data (add a number if the day has more than one)
-             --all           To run all days in conjuction with a `year` parameter
+  -a         --all           To run all days in conjuction with a `year` parameter
   -o x:y etc --other x:y     To pass random `other` parameters into a day
 ```
 

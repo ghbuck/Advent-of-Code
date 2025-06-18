@@ -52,6 +52,7 @@ for (const [index, arg] of args.entries()) {
       }
       break
     case 'all':
+    case '-a':
     case '--all':
       doAllDays = true
       break
