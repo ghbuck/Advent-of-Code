@@ -8,7 +8,7 @@ The code in this repository follows the [automation guidelines on the /r/advento
 
 - **Only inputs requested:** The only requests this code makes against adventofcode.com is to download puzzle input.
 - **Requests are throttled:** Requests are made no more frequently than once per minute.
-- **Inputs are cached:** Inputs are locally cached so that any given input is only requested once. If the user wishes to download an input again, the must delete the relevant cache file.
+- **Inputs are cached:** Inputs are locally cached so that any given input is only requested once. If the user wishes to download an input again, they must delete the relevant cache file.
 - **Inputs are not saved in GitHub:** As proprietary information, they are downloaded and cached in `./input`, which is excluded in `.gitignore`
 - **User-Agent Header:** The `User-Agent` header in `getRequestHeaders()` is set to me
 
