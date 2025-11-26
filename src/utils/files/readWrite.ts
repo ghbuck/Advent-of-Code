@@ -30,15 +30,19 @@ export const setLastRequestTimestamp = (timestamp: number) => {
 
 export const createNewDay = async (params: RunParams) => {
   const inputFolder = resolve('.', 'input', `${params.year}`)
+
+  const yearFolder = resolve('.', 'src', `${params.year}`)
   const dayFolder = resolve('.', 'src', `${params.year}`, `${params.day}`)
 
   const sourceFilePath = resolve('.', 'src', 'utils', 'template', 'index.ts')
   const newFilePath = resolve(dayFolder, 'index.ts')
   const inputFiles = [resolve(inputFolder, `${params.day}.txt`), resolve(inputFolder, `${params.day}_example.txt`)]
 
-  if (!existsSync(dayFolder)) {
-    console.log(kleur.cyan(`Creating ${dayFolder}`))
-    mkdirSync(dayFolder)
+  for (const folder of [inputFolder, yearFolder, dayFolder]) {
+    if (!existsSync(folder)) {
+      console.log(kleur.cyan(`Creating ${folder}`))
+      mkdirSync(folder)
+    }
   }
 
   if (!existsSync(`${dayFolder}/index.ts`)) {
