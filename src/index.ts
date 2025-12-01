@@ -8,8 +8,11 @@ import { performance } from 'perf_hooks'
 const defaultDate = new Date()
 let sessionId = ''
 
+// JavaScript's Date.getMonth() method returns a zero-based index for months
+const defaultMonth = defaultDate.getMonth() + 1
+
 const params: RunParams = {
-  year: defaultDate.getMonth() === 12 ? defaultDate.getFullYear() : defaultDate.getFullYear() - 1,
+  year: defaultMonth === 12 ? defaultDate.getFullYear() : defaultDate.getFullYear() - 1,
   day: defaultDate.getDate(),
   part: 'all',
   isTest: false,
