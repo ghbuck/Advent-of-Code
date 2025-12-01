@@ -17,8 +17,8 @@ export const run = async (params: RunParams) => {
 
   printAnswers({
     params,
-    answer1: undefined,
-    answer2: undefined,
+    answer1: params.part === 'all' || params.part === 1 ? undefined : undefined,
+    answer2: params.part === 'all' || params.part === 2 ? undefined : undefined,
     solution,
   })
 }
