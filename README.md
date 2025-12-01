@@ -43,6 +43,7 @@ npm run format
 ## Yearly READMEs
 
 - [2024](src/2024/README.md)
+- [2025](src/2025/README.md)
 
 ## Further Info
 
