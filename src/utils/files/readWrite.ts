@@ -50,20 +50,30 @@ export const createNewDay = async (params: RunParams) => {
     copyFileSync(sourceFilePath, newFilePath)
   }
 
-  for (const filePath of inputFiles) {
-    if (!existsSync(filePath)) {
-      let input = ''
+  const doFileDownload = (params.year === params.defaultYear && params.day <= params.defaultDay) || params.year < params.defaultYear
 
-      if (filePath.endsWith('_example.txt')) {
-        console.log(kleur.cyan(`Creating the example input file`))
-        input = await downloadExample(params)
-      } else {
-        console.log(kleur.cyan(`Creating the main input file`))
-        input = await downloadInput(params)
+  if (doFileDownload) {
+    for (const filePath of inputFiles) {
+      if (!existsSync(filePath)) {
+        let input = ''
+
+        if (filePath.endsWith('_example.txt')) {
+          console.log(kleur.cyan(`Creating the example input file`))
+          input = await downloadExample(params)
+        } else {
+          console.log(kleur.cyan(`Creating the main input file`))
+          input = await downloadInput(params)
+        }
+
+        writeFileSync(filePath, input)
       }
-
-      writeFileSync(filePath, input)
     }
+  } else {
+    console.log(
+      kleur.yellow(
+        `Skipping input file download as the requested day has not yet opened.\nRerun after 00:00 Eastern, December ${params.day} to download the input files.`,
+      ),
+    )
   }
 
   console.log(kleur.green(`\n${params.year}, day ${params.day} is set up and ready to go!\n`))

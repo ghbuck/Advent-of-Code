@@ -3,6 +3,8 @@ import { Answer, PartNum } from '@utils/dataTypes/index.js'
 export interface RunParams {
   year: number
   day: number
+  defaultYear: number
+  defaultDay: number
   part: PartNum
   isTest: boolean
   testPart: number

@@ -10,10 +10,13 @@ let sessionId = ''
 
 // JavaScript's Date.getMonth() method returns a zero-based index for months
 const defaultMonth = defaultDate.getMonth() + 1
+const defaultYear = defaultMonth === 12 ? defaultDate.getFullYear() : defaultDate.getFullYear() - 1
 
 const params: RunParams = {
-  year: defaultMonth === 12 ? defaultDate.getFullYear() : defaultDate.getFullYear() - 1,
+  year: defaultYear,
+  defaultYear: defaultYear,
   day: defaultDate.getDate(),
+  defaultDay: defaultDate.getDate(),
   part: 'all',
   isTest: false,
   testPart: 0,
