@@ -108,9 +108,9 @@ const parseHtmlStringForReadme = (day: number, year: number, htmlString: string)
   const title = htmlString.match(/<h2>--- ?(Day \d+: .+?) ?---<\/h2>/)?.[1]
   if (title !== undefined && !existingDays.includes(day)) {
     const newBodyPart =
-      `### [${title}](https://adventofcode.com/${year}/day/${day})\n\n` +
+      `\n### [${title}](https://adventofcode.com/${year}/day/${day})\n\n` +
       '#### $\\textsf{\\color{red}{Part 1:}}$\n\n' +
-      '#### $\\textsf{\\color{green}{Part 2:}}$\n\n'
+      '#### $\\textsf{\\color{green}{Part 2:}}$'
 
     solutions.push(newBodyPart)
     solutions.sort((a: string, b: string) => {

@@ -1,5 +1,5 @@
 # [YEAR] Thoughts and Solutions
 
-# Opening Thoughts
+## Opening Thoughts
 
-# Solutions
+## Solutions
