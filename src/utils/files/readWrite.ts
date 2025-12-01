@@ -36,7 +36,7 @@ export const createNewDay = async (params: RunParams) => {
 
   const sourceFilePath = resolve('.', 'src', 'utils', 'template', 'index.ts')
   const newFilePath = resolve(dayFolder, 'index.ts')
-  const inputFiles = [resolve(inputFolder, `${params.day}.txt`), resolve(inputFolder, `${params.day}_example.txt`)]
+  const inputFiles = [resolve(inputFolder, `${params.day}_example.txt`), resolve(inputFolder, `${params.day}.txt`)]
 
   for (const folder of [inputFolder, yearFolder, dayFolder]) {
     if (!existsSync(folder)) {
