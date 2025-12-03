@@ -83,7 +83,8 @@ const makeFetchRequest = async (url: string): Promise<string> => {
     const response = await fetch(url, getRequestHeaders())
     output = await response.text()
 
-    setLastRequestTimestamp(Date.now())
+    const timestamp = url.endsWith('/input') ? Date.now() : 0
+    setLastRequestTimestamp(timestamp)
   }
 
   return output

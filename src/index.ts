@@ -36,20 +36,24 @@ for (const [index, arg] of args.entries()) {
 
   const nextArg = args[index + 1]
   switch (arg) {
+    case 'y':
     case '-y':
     case '--year':
       params.year = Number(nextArg)
       break
+    case 'd':
     case '-d':
     case '--day':
       params.day = Number(nextArg)
       break
+    case 'p':
     case '-p':
     case '--part':
       if (nextArg === '1' || nextArg == '2') {
         params.part = Number(nextArg) as PartNum
       }
       break
+    case 't':
     case '-t':
     case '--test':
       params.isTest = true
@@ -57,11 +61,13 @@ for (const [index, arg] of args.entries()) {
         params.testPart = Number(nextArg)
       }
       break
+    case 'a':
     case 'all':
     case '-a':
     case '--all':
       doAllDays = true
       break
+    case 'o':
     case '-o':
     case '--other':
       params.other = args.slice(index + 1).reduce((final, arg) => {
