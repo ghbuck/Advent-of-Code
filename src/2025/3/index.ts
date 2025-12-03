@@ -9,7 +9,7 @@ const parseInput = (input: string): number[][] => {
 
 const calcMaxJoltage = (powerBanks: number[][], numBatteriesToSave: number): number => {
   // We're going to use two nested reduces here.
-  // The outer reduce will iterate over each power bank (array of battery joltages)
+  // The outer reduce will iterate over each power bank (array of batteries)
   // The inner reduce will iterate over each battery in the current power bank
   // and build an array of the highest joltages we can save based on the number
   // of batteries we are allowed to save.
@@ -20,7 +20,7 @@ const calcMaxJoltage = (powerBanks: number[][], numBatteriesToSave: number): num
       const numRemainingBatteries = maxBankIndex - index
 
       // Make sure we have enough remaining batteries to fill our saved batteries array
-      // As long as numRemainingBatteries is less than numBatteriesToSave, we start at 0
+      // As long as numBatteriesToSave is less than numRemainingBatteries, we start at 0
       // Subtract to get the correct starting index to check against
       let checkIndex = Math.max(0, numBatteriesToSave - numRemainingBatteries - 1)
 
@@ -40,7 +40,7 @@ const calcMaxJoltage = (powerBanks: number[][], numBatteriesToSave: number): num
       return savedBatteries
     }, Array<number>(numBatteriesToSave).fill(0))
 
-    // Sum the highest joltages from this bank and add to the total
+    // Sum the selected battery joltages from this bank and add to the total
     return total + Number(bankMaxValues.join(''))
   }, 0)
 }

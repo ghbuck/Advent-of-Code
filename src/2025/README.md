@@ -94,4 +94,4 @@ const calcMaxJoltage = (powerBanks: number[][], numBatteriesToSave: number): num
 }
 ```
 
-I feel pretty good about the implementation. It's a single-pass, efficint solution that works for both parts.
+I feel pretty good about the implementation. It's a single-pass, efficient solution that works for both parts.
