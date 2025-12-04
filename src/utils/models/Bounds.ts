@@ -110,5 +110,17 @@ export class Bounds {
     return point.y >= 0 && this.#max.y >= point.y
   }
 
+  isEdgeX(point: Point): boolean {
+    return point.x === this.#min.x || point.x === this.#max.x
+  }
+
+  isEdgeY(point: Point): boolean {
+    return point.y === this.#min.y || point.y === this.#max.y
+  }
+
+  isEdge(point: Point): boolean {
+    return this.isEdgeX(point) || this.isEdgeY(point)
+  }
+
   //#endregion
 }

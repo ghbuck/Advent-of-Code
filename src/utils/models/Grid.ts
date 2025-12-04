@@ -30,7 +30,7 @@ export interface RegionResponse<T> {
   regions: RegionInfo[]
 }
 
-export type NeighborLocation = 'above' | 'below' | 'left' | 'right'
+export type NeighborLocation = 'above' | 'below' | 'left' | 'right' | 'aboveLeft' | 'aboveRight' | 'belowLeft' | 'belowRight'
 export type NeighborhoodMap = Map<NeighborLocation, number | undefined>
 
 export type ShiftDirection = NeighborLocation
@@ -382,17 +382,43 @@ export class Grid<T> {
     const colCount = this.#bounds.getMaxX() + 1
 
     const neighborhoodMap: NeighborhoodMap = new Map<NeighborLocation, number>()
-    if (cellKey - colCount > 0) {
-      neighborhoodMap.set('above', cellKey - colCount)
+
+    const aboveKey = cellKey - colCount
+    const belowKey = cellKey + colCount
+    const leftKey = cellKey - 1
+    const rightKey = cellKey + 1
+
+    if (aboveKey > 0) {
+      neighborhoodMap.set('above', aboveKey)
+
+      const aboveLeftKey = aboveKey - 1
+      const aboveRightKey = aboveKey + 1
+
+      if (!Number.isInteger((aboveKey - 1) / colCount)) {
+        neighborhoodMap.set('aboveLeft', aboveLeftKey)
+      }
+      if (!Number.isInteger(aboveKey / colCount)) {
+        neighborhoodMap.set('aboveRight', aboveRightKey)
+      }
     }
-    if (cellKey + colCount <= this.#cells.size) {
-      neighborhoodMap.set('below', cellKey + colCount)
+    if (belowKey <= this.#cells.size) {
+      neighborhoodMap.set('below', belowKey)
+
+      const belowLeftKey = belowKey - 1
+      const belowRightKey = belowKey + 1
+
+      if (!Number.isInteger(belowLeftKey / colCount)) {
+        neighborhoodMap.set('belowLeft', belowLeftKey)
+      }
+      if (!Number.isInteger(belowKey / colCount)) {
+        neighborhoodMap.set('belowRight', belowRightKey)
+      }
     }
-    if (!Number.isInteger((cellKey - 1) / colCount)) {
-      neighborhoodMap.set('left', cellKey - 1)
+    if (!Number.isInteger(leftKey / colCount)) {
+      neighborhoodMap.set('left', leftKey)
     }
     if (!Number.isInteger(cellKey / colCount)) {
-      neighborhoodMap.set('right', cellKey + 1)
+      neighborhoodMap.set('right', rightKey)
     }
 
     const cell = this.#cells.get(cellKey)
@@ -451,6 +477,7 @@ export class Grid<T> {
     const matchingNeighbors = this.#filterTheNeighborhood(cell, theMap, localVisited)
 
     return Promise.all(
+      // eslint-disable-next-line @typescript-eslint/await-thenable
       [...matchingNeighbors.values()].map((neighborKey: number | undefined) => {
         if (neighborKey !== undefined) {
           const neighbor = this.#cells.get(neighborKey)
@@ -515,7 +542,7 @@ export class Grid<T> {
     let perimeter = 0
 
     const sortedCells = [...cells].sort((a, b) => a - b)
-    const neighborDirections: NeighborLocation[] = ['above', 'right', 'below', 'left']
+    const neighborDirections: NeighborLocation[] = ['above', 'right', 'below', 'left', 'aboveLeft', 'aboveRight', 'belowLeft', 'belowRight']
 
     const sideInfo: SideInfo<T>[] = []
 
