@@ -95,3 +95,9 @@ const calcMaxJoltage = (powerBanks: number[][], numBatteriesToSave: number): num
 ```
 
 I feel pretty good about the implementation. It's a single-pass, efficient solution that works for both parts.
+
+### [Day 4: Printing Department](https://adventofcode.com/2025/day/4)
+
+#### $\textsf{\color{red}{Part 1:}}$
+
+#### $\textsf{\color{green}{Part 2:}}$
