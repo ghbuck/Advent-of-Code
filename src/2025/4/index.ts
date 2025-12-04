@@ -119,7 +119,7 @@ const findTotalMoveablePaperRolls = (map: string[][], points: Point[], isTest: b
 export const run = async (params: RunParams) => {
   const solution: Solution = {
     part1: params.isTest ? 13 : 1419,
-    part2: params.isTest ? 43 : undefined,
+    part2: params.isTest ? 43 : 8739,
   }
 
   const map = parseInput(await getInput(params))
