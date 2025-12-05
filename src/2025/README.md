@@ -101,3 +101,21 @@ I feel pretty good about the implementation. It's a single-pass, efficient solut
 #### $\textsf{\color{red}{Part 1:}}$
 
 #### $\textsf{\color{green}{Part 2:}}$
+
+### [Day 5: Cafeteria](https://adventofcode.com/2025/day/5)
+
+This was a really fun, quick one. The overlapping ranges tripped me up at first, but once I realized the issue it all fell into place nicely.
+
+#### $\textsf{\color{red}{Part 1:}}$
+
+I tried, at first, having only looked at the test input, to use a `Set<number>` to store the ranges. When I got a `RangeError: Set maximum size exceeded`, my hopes of `set.has(id)` evaporated.
+
+So I just did a good old fashioned `dataSet.ranges.some(([start, end]) => id >= start && id <= end)`, which worked fine.
+
+#### $\textsf{\color{green}{Part 2:}}$
+
+Then, when reading about part 2 and realizing that I would need to find the count of all unique fresh ids, I knew I would have to consolidate the overlapping ranges first. Reducing the differences of ends to starts of the ranges was straightforward enough.
+
+Once I did that, however, it meant I could use a binary search for part 1. So I went back and modified part 1 to do so.
+
+I have to say, seeing a sub 1ms runtime for part 1 was very satisfying!
