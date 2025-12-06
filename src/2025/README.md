@@ -119,3 +119,17 @@ Then, when reading about part 2 and realizing that I would need to find the coun
 Once I did that, however, it meant I could use a binary search for part 1. So I went back and modified part 1 to do so.
 
 I have to say, seeing a sub 1ms runtime for part 1 was very satisfying!
+
+### [Day 6: Trash Compactor](https://adventofcode.com/2025/day/6)
+
+Most of the time I love automatic whitespace trimming, but today… not so much. I usually open the example and input files to see what I'm working with, and since today we were dealing with fixed-width columns, the trimming that I wasn't paying attention to bit me in the ass.
+
+#### $\textsf{\color{red}{Part 1:}}$
+
+This part was super easy. Just interate over the data [col][row] and perform the operation listed in the last row. Simple.
+
+#### $\textsf{\color{green}{Part 2:}}$
+
+Part two would have been simple as well, if not for the aforementioned whitespace trimming. I had the logic nailed down, but couldn't understand why I was only a few numbers off each time. [smdh]
+
+I'm also not a huge fan of having to parse the input two times, but my tired brain just didn't want to have to refactor part 1 to handle the changes needed for part 2.
