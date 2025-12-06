@@ -126,10 +126,12 @@ Most of the time I love automatic whitespace trimming, but today… not so much.
 
 #### $\textsf{\color{red}{Part 1:}}$
 
-This part was super easy. Just interate over the data [col][row] and perform the operation listed in the last row. Simple.
+This part was super easy. Just interate over the data `[col][row]` and perform the operation listed in the last row. Simple.
 
 #### $\textsf{\color{green}{Part 2:}}$
 
 Part two would have been simple as well, if not for the aforementioned whitespace trimming. I had the logic nailed down, but couldn't understand why I was only a few numbers off each time. [smdh]
 
 I'm also not a huge fan of having to parse the input two times, but my tired brain just didn't want to have to refactor part 1 to handle the changes needed for part 2.
+
+> _Ed: In reading a coworker's implementation I saw they used a grid (or understood that what we were doing to was gridding…). I may refactor and see if that speeds things up or cleans up my implementation_

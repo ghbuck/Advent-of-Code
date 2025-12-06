@@ -66,7 +66,7 @@ const part2 = (input: string): number => {
       colStore.push(Number(colString))
     }
 
-    // If we hit a space in the action row or the last column, perform the operation
+    // If we hit a col with nothing in it or the last column, perform the operation
     if ((colString === '' && localAction === ' ') || col === width - 1) {
       colVals.push(operations[action as keyof typeof operations](colStore))
 

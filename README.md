@@ -61,3 +61,5 @@ You can run these commands separately, but I've added [lint-staged](https://www.
   - complete 2024 README
   - day 15 is slow (6s)
   - day 18 is slow (8s)
+- 2025
+  - see if using `Grid` helps day 6
