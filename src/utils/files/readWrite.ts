@@ -28,6 +28,20 @@ export const setLastRequestTimestamp = (timestamp: number) => {
   writeFileSync(lastRequestTimestampPath, `${timestamp}`)
 }
 
+export const getLastDayNum = (year: number): number => {
+  const lastDayInfoFile = readFileSync(resolve('.', 'nonTraditionalLastDayNums.csv')).toString()
+  const lines = lastDayInfoFile.trim().split('\n').slice(1) // Skip header
+
+  for (const line of lines) {
+    const [fileYear, lastDayNum] = line.split(',')
+    if (Number(fileYear) === year) {
+      return Number(lastDayNum)
+    }
+  }
+
+  return 25
+}
+
 export const createNewDay = async (params: RunParams) => {
   const inputFolder = resolve('.', 'input', `${params.year}`)
 

@@ -1,4 +1,5 @@
 import type { Answer, AnswerParams } from '@utils/dataTypes/index.js'
+import { getLastDayNum } from '@utils/files/readWrite.js'
 
 import kleur from 'kleur'
 
@@ -13,11 +14,17 @@ const checkAnswer = (answer: Answer, solution: Answer): string => {
 }
 
 export const printAnswers = ({ params: { year, day, part }, answer1, answer2, solution }: AnswerParams) => {
+  const isLastDay = day === getLastDayNum(year)
+
   const doPart1 = part === 'all' || part === 1
-  const doPart2 = part === 'all' || part === 2
+  const doPart2 = (part === 'all' && !isLastDay) || part === 2
 
   if (doPart1) {
-    console.log(kleur.blue(`Year ${year}, Day ${day}, Part 1: ${answer1 ?? ''} (${checkAnswer(answer1, solution.part1)}) ${!doPart2 ? '\n' : ''}`))
+    console.log(
+      kleur.blue(
+        `Year ${year}, Day ${day}${!isLastDay ? ', Part 1' : ''}: ${answer1 ?? ''} (${checkAnswer(answer1, solution.part1)}) ${!doPart2 ? '\n' : ''}`,
+      ),
+    )
   }
 
   if (doPart2) {

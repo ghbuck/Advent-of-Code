@@ -25,7 +25,7 @@ export interface Solution {
 export interface AnswerParams {
   params: RunParams
   answer1: Answer
-  answer2: Answer
+  answer2?: Answer
   solution: Solution
 }
 
