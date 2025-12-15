@@ -90,6 +90,10 @@ const makeFetchRequest = async (url: string): Promise<string> => {
   return output
 }
 
+const getSectionDayNumber = (sectionString: string): number => {
+  return Number(sectionString.substring(sectionString.indexOf('Day ') + 4, sectionString.indexOf(':')))
+}
+
 const parseHtmlStringForReadme = (day: number, year: number, htmlString: string) => {
   const readmePath = resolve('.', 'src', `${year}`, 'README.md')
 
@@ -102,29 +106,25 @@ const parseHtmlStringForReadme = (day: number, year: number, htmlString: string)
   const readme = readFileSync(readmePath).toString()
   const readmeParts = readme.split(/^(?=## )/m).map((mainSection: string) => mainSection.split(/^(?=### )/m))
   const solutions = readmeParts[2]
-  const existingDays = solutions
-    .map((section: string) => Number(section.substring(section.indexOf('Day ') + 4, section.indexOf(':'))))
-    .filter((day: number) => !isNaN(day))
+  const existingDays = solutions.map((section: string) => getSectionDayNumber(section)).filter((day: number) => !isNaN(day))
 
   const title = htmlString.match(/<h2>--- ?(Day \d+: .+?) ?---<\/h2>/)?.[1]
   if (title !== undefined && !existingDays.includes(day)) {
     const newBodyPart =
-      `\n### [${title}](https://adventofcode.com/${year}/day/${day})\n\n` +
+      `### [${title}](https://adventofcode.com/${year}/day/${day})\n\n` +
       '#### $\\textsf{\\color{red}{Part 1:}}$\n\n' +
-      '#### $\\textsf{\\color{green}{Part 2:}}$'
+      '#### $\\textsf{\\color{green}{Part 2:}}$\n'
 
-    solutions.push(newBodyPart)
-    solutions.sort((a: string, b: string) => {
-      if (a.startsWith('## Solution')) {
-        return -1
-      } else if (b.startsWith('## Solution')) {
-        return 1
-      } else {
-        const testA = Number(a.substring(a.indexOf('Day ') + 4, a.indexOf(':')))
-        const testB = Number(b.substring(b.indexOf('Day ') + 4, b.indexOf(':')))
-        return testA - testB
-      }
+    const insertionIndex = solutions.findIndex((section: string) => {
+      const sectionDay = getSectionDayNumber(section)
+      return !isNaN(sectionDay) && sectionDay > day
     })
+
+    if (insertionIndex === -1) {
+      solutions.push(`\n${newBodyPart}`)
+    } else {
+      solutions.splice(insertionIndex, 0, `${newBodyPart}\n`)
+    }
 
     console.log(kleur.cyan(`Updating the README.md file for day ${day}`))
     writeFileSync(readmePath, readmeParts.flatMap((part: string[]) => part.join('')).join(''))

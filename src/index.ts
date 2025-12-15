@@ -77,6 +77,9 @@ for (const [index, arg] of args.entries()) {
       break
     case '--newday':
       params.createNewDay = true
+      if (!isNaN(Number(nextArg))) {
+        params.day = Number(nextArg)
+      }
       break
     case '--session':
       params.saveSessionId = true
