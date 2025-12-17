@@ -1,5 +1,5 @@
 import { Day, PartNum, RunParams } from '@utils/dataTypes/index.js'
-import { createNewDay, setSessionId } from '@utils/files/index.js'
+import { createNewDay, getLastDayNum, setSessionId } from '@utils/files/index.js'
 import { printRunTime } from '@utils/printing/index.js'
 
 import kleur from 'kleur'
@@ -115,8 +115,9 @@ if (params.createNewDay) {
   setSessionId(sessionId)
 } else {
   let days: number[] = []
+
   if (doAllDays) {
-    days = Array.from({ length: 25 }, (_, i) => i + 1)
+    days = Array.from({ length: getLastDayNum(params.year) }, (_, i) => i + 1)
   } else {
     days.push(params.day)
   }
