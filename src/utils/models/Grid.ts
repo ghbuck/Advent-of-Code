@@ -378,7 +378,7 @@ export class Grid<T> {
    * @param {number} cellKey
    * @returns {NeighborhoodMap} a map of <NeighborLocation, neighbor cell key>
    */
-  mapTheNeighborhood(cellKey: number): NeighborhoodMap {
+  mapTheNeighborhood(cellKey: number, withDiagonals = false): NeighborhoodMap {
     const colCount = this.#bounds.getMaxX() + 1
 
     const neighborhoodMap: NeighborhoodMap = new Map<NeighborLocation, number>()
@@ -391,27 +391,31 @@ export class Grid<T> {
     if (aboveKey > 0) {
       neighborhoodMap.set('above', aboveKey)
 
-      const aboveLeftKey = aboveKey - 1
-      const aboveRightKey = aboveKey + 1
+      if (withDiagonals) {
+        const aboveLeftKey = aboveKey - 1
+        const aboveRightKey = aboveKey + 1
 
-      if (!Number.isInteger((aboveKey - 1) / colCount)) {
-        neighborhoodMap.set('aboveLeft', aboveLeftKey)
-      }
-      if (!Number.isInteger(aboveKey / colCount)) {
-        neighborhoodMap.set('aboveRight', aboveRightKey)
+        if (!Number.isInteger((aboveKey - 1) / colCount)) {
+          neighborhoodMap.set('aboveLeft', aboveLeftKey)
+        }
+        if (!Number.isInteger(aboveKey / colCount)) {
+          neighborhoodMap.set('aboveRight', aboveRightKey)
+        }
       }
     }
     if (belowKey <= this.#cells.size) {
       neighborhoodMap.set('below', belowKey)
 
-      const belowLeftKey = belowKey - 1
-      const belowRightKey = belowKey + 1
+      if (withDiagonals) {
+        const belowLeftKey = belowKey - 1
+        const belowRightKey = belowKey + 1
 
-      if (!Number.isInteger(belowLeftKey / colCount)) {
-        neighborhoodMap.set('belowLeft', belowLeftKey)
-      }
-      if (!Number.isInteger(belowKey / colCount)) {
-        neighborhoodMap.set('belowRight', belowRightKey)
+        if (!Number.isInteger(belowLeftKey / colCount)) {
+          neighborhoodMap.set('belowLeft', belowLeftKey)
+        }
+        if (!Number.isInteger(belowKey / colCount)) {
+          neighborhoodMap.set('belowRight', belowRightKey)
+        }
       }
     }
     if (!Number.isInteger(leftKey / colCount)) {
@@ -469,11 +473,11 @@ export class Grid<T> {
    * @param visited - a cheeky name for all previously found neighbors
    * @returns
    */
-  async #findMatchingNeighbors([cellKey, cell]: [number, Cell<T>], visited?: Set<number>): Promise<Set<number>> {
+  async #findMatchingNeighbors([cellKey, cell]: [number, Cell<T>], visited?: Set<number>, withDiagonals = false): Promise<Set<number>> {
     const localVisited = visited !== undefined ? visited : new Set<number>()
     localVisited.add(cellKey)
 
-    const theMap = this.mapTheNeighborhood(cellKey)
+    const theMap = this.mapTheNeighborhood(cellKey, withDiagonals)
     const matchingNeighbors = this.#filterTheNeighborhood(cell, theMap, localVisited)
 
     return Promise.all(
@@ -483,7 +487,7 @@ export class Grid<T> {
           const neighbor = this.#cells.get(neighborKey)
           if (neighbor !== undefined) {
             localVisited.add(neighborKey)
-            return this.#findMatchingNeighbors([neighborKey, neighbor], localVisited)
+            return this.#findMatchingNeighbors([neighborKey, neighbor], localVisited, withDiagonals)
           }
         }
       }),
@@ -538,11 +542,14 @@ export class Grid<T> {
    * @param {Set<number>} cells - a set of all item cells in the region
    * @returns {RegionInfo} a RegionInfo object with area, perimeter, and side count
    */
-  #calculateRegionInfo(cells: Set<number>): RegionInfo {
+  #calculateRegionInfo(cells: Set<number>, withDiagonals = false): RegionInfo {
     let perimeter = 0
 
     const sortedCells = [...cells].sort((a, b) => a - b)
-    const neighborDirections: NeighborLocation[] = ['above', 'right', 'below', 'left', 'aboveLeft', 'aboveRight', 'belowLeft', 'belowRight']
+    const neighborDirections: NeighborLocation[] = ['above', 'right', 'below', 'left']
+    if (withDiagonals) {
+      neighborDirections.push('aboveLeft', 'aboveRight', 'belowLeft', 'belowRight')
+    }
 
     const sideInfo: SideInfo<T>[] = []
 
@@ -578,15 +585,15 @@ export class Grid<T> {
    * @param {T} item - an item potentially in the grid
    * @returns {RegionResponse<T>} the item along with a RegionInfo object
    */
-  async findRegions(item: T): Promise<RegionResponse<T>> {
+  async findRegions(item: T, withDiagonals = false): Promise<RegionResponse<T>> {
     let cells = this.#findCells(item)
     const regions: RegionInfo[] = []
 
     while (cells.length > 0) {
       const firstCell = cells[0]
 
-      const regionCells = await this.#findMatchingNeighbors(firstCell)
-      const regionInfo = this.#calculateRegionInfo(regionCells)
+      const regionCells = await this.#findMatchingNeighbors(firstCell, undefined, withDiagonals)
+      const regionInfo = this.#calculateRegionInfo(regionCells, withDiagonals)
 
       regions.push(regionInfo)
 
