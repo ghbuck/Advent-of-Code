@@ -136,6 +136,18 @@ I'm also not a huge fan of having to parse the input two times, but my tired bra
 
 > _Ed: In reading a coworker's implementation I saw they used a grid (or understood that what we were doing to was gridding…). I may refactor and see if that speeds things up or cleans up my implementation._
 
+### [Day 11: Reactor](https://adventofcode.com/2025/day/11)
+
+Ah yes, another graph traversal problem…
+
+#### $\textsf{\color{red}{Part 1:}}$
+
+This was the bulk of the work, getting the graph traversal working correctly. Got some robot help in reminding me about memoization to speed things up.
+
+#### $\textsf{\color{green}{Part 2:}}$
+
+Part 2 just involved adding tracking for if we've passed through both required nodes. So that at the `endNode`, we only count the path if both nodes have been visited.
+
 ### [Day 12: Christmas Tree Farm](https://adventofcode.com/2025/day/12)
 
 I fell off the wagon for a few days. Work and life got crazy, so I'm trying to catch up. Definitely lost the company tournament, but oh well.
@@ -146,25 +158,25 @@ I definitely had some help with this one from Claude. Anytime I get into recursi
 
 I do have to note this interesting tidbit [from a coworker](https://github.com/rjwut/advent/blob/8d8bbc058202aa004115496b3dbd6b5eb130e616/src/solutions/2025/day-12.js#L8-L29):
 
->  I wasted a lot of time working on an algorithm for packing in the presents, until I discovered
->  four things:
+> I wasted a lot of time working on an algorithm for packing in the presents, until I discovered
+> four things:
 >
->  1. I realized that I could filter out some cases simply by computing the total area of the
->     presents to be put in a region, and if that exceeds the area of the region itself, it won't
->     fit.
->  2. I decided that maybe I should look at my input, and discovered that all the presents fit in a
->     3x3 square, not just the ones in the sample input.
->  3. I then realized that if subdividing the region into 3x3 cells resulted in at least one cell
->     for each present, it was guaranteed that there would be enough space, and I'd only have to do
->     the more laborious fitting algorithm for any that did have enough area but did not have enough
->     3x3 cells.
->  4. The last discovery was: there _weren't_ any cases that would require the fitting algorithm;
->     all cases in the actual input were properly accounted for already.
+> 1. I realized that I could filter out some cases simply by computing the total area of the
+>    presents to be put in a region, and if that exceeds the area of the region itself, it won't
+>    fit.
+> 2. I decided that maybe I should look at my input, and discovered that all the presents fit in a
+>    3x3 square, not just the ones in the sample input.
+> 3. I then realized that if subdividing the region into 3x3 cells resulted in at least one cell
+>    for each present, it was guaranteed that there would be enough space, and I'd only have to do
+>    the more laborious fitting algorithm for any that did have enough area but did not have enough
+>    3x3 cells.
+> 4. The last discovery was: there _weren't_ any cases that would require the fitting algorithm;
+>    all cases in the actual input were properly accounted for already.
 >
->  So all the work I did on a fitting algorithm was unnecessary: I just needed to check whether
->  there was enough room to tile sufficient 3x3 cells into the region for the presents.
+> So all the work I did on a fitting algorithm was unnecessary: I just needed to check whether
+> there was enough room to tile sufficient 3x3 cells into the region for the presents.
 >
->  There's no way that was an accident, especially considering that it wouldn't have worked one of
->  the test cases. Mr. Wastl did this on purpose, the sneaky little elf. My OCD tendencies are
->  annoyed by this, but I don't know if they're annoyed enough to try to get the fitting algorithm
->  I was working on across the finish line.
+> There's no way that was an accident, especially considering that it wouldn't have worked one of
+> the test cases. Mr. Wastl did this on purpose, the sneaky little elf. My OCD tendencies are
+> annoyed by this, but I don't know if they're annoyed enough to try to get the fitting algorithm
+> I was working on across the finish line.
