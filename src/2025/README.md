@@ -134,7 +134,17 @@ Part two would have been simple as well, if not for the aforementioned whitespac
 
 I'm also not a huge fan of having to parse the input two times, but my tired brain just didn't want to have to refactor part 1 to handle the changes needed for part 2.
 
-> _Ed: In reading a coworker's implementation I saw they used a grid (or understood that what we were doing to was gridding…). I may refactor and see if that speeds things up or cleans up my implementation._
+> _Ed: In reading a coworker's implementation I saw they used a grid (or understood that what we were doing was gridding…). I may refactor and see if that speeds things up or cleans up my implementation._
+
+### [Day 8: Playground](https://adventofcode.com/2025/day/8)
+
+#### $\textsf{\color{red}{Part 1:}}$
+
+In solving this part, I first decided to find all distances and keep a map of each junction box's distances to all others. Then I iterated through the entire set of junction boxes to find the shortest distance connection. Then, once I hit the allowed number of connections, I mapped the circuits. This worked, if slow, for part 1. When I got to part 2, however, I realized I needed a better approach.
+
+#### $\textsf{\color{green}{Part 2:}}$
+
+With the architecture for part1 I realized I would have to either arbitrarily check the circuit graph or do it every time. I had resisted doing it every time because I thought it would be too much of a time sink. Then I actually tested it and realized with a stack traversal approach (rather than recursive) it was actually pretty inexpensive. After that, I realized that if I just created a single array of all connections, sorted by distance, there would be no need to iterate over all the junction boxes every time. With that, I realized I could get both answers with a single call and checks for each iteration.
 
 ### [Day 11: Reactor](https://adventofcode.com/2025/day/11)
 

@@ -38,3 +38,7 @@ export interface Dimensions {
   length: number
   width: number
 }
+
+export interface Point3D extends Point {
+  z: number
+}
