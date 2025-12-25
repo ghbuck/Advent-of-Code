@@ -1,4 +1,4 @@
-import { Point, Point3D } from '@utils/dataTypes/index.js'
+import { Edge, Point, Point3D } from '@utils/dataTypes/index.js'
 
 export const findFourthPoint = (p1: Point, p2: Point, p3: Point): Point => {
   const midpoint = {
@@ -25,4 +25,19 @@ export const distanceBetweenPoints = (a: Point & Partial<Point3D>, b: Point & Pa
 
 export const getManhattanDistance = (a: Point, b: Point): number => {
   return Math.abs(a.x - b.x) + Math.abs(a.y - b.y)
+}
+
+// Get all edges (line segments) from a polygon defined by points
+export const getPolygonEdges = (coordinates: Point[]): Edge[] => {
+  const edges: Edge[] = []
+
+  for (let i = 0; i < coordinates.length; i++) {
+    const start = coordinates[i]
+    const end = coordinates[i + 1 < coordinates.length ? i + 1 : 0] // Wrap to first point
+    const slope = end.x === start.x ? 'vertical' : end.y === start.y ? 'horizontal' : (end.y - start.y) / (end.x - start.x)
+
+    edges.push({ start, end, slope })
+  }
+
+  return edges
 }

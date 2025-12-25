@@ -146,6 +146,18 @@ In solving this part, I first decided to find all distances and keep a map of ea
 
 With the architecture for part1 I realized I would have to either arbitrarily check the circuit graph or do it every time. I had resisted doing it every time because I thought it would be too much of a time sink. Then I actually tested it and realized with a stack traversal approach (rather than recursive) it was actually pretty inexpensive. After that, I realized that if I just created a single array of all connections, sorted by distance, there would be no need to iterate over all the junction boxes every time. With that, I realized I could get both answers with a single call and checks for each iteration.
 
+### [Day 9: Movie Theater](https://adventofcode.com/2025/day/9)
+
+#### $\textsf{\color{red}{Part 1:}}$
+
+Once again, a day where I complete part one very quickly. Just a simple l×w calculation for the area of a rectangle…
+
+#### $\textsf{\color{green}{Part 2:}}$
+
+Jesus Christ… I want to feel like I'm good at what I do, but this one really made me question that. I spent hours trying to figure out why my edge intersection logic was failing. I was trying really, really hard not to copy a bit of a coworker's… I'm not going to say "cheat", but that's just what it was; cheat the rectangle's points inward just a bit so that you don't have to worry about an edge exactly touching another edge.
+
+But in the end, I caved. I just couldn't figure it out. I hate that I had to do that, but at least now I can move on.
+
 ### [Day 11: Reactor](https://adventofcode.com/2025/day/11)
 
 Ah yes, another graph traversal problem…

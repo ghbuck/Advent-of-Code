@@ -42,3 +42,9 @@ export interface Dimensions {
 export interface Point3D extends Point {
   z: number
 }
+
+export interface Edge {
+  start: Point
+  end: Point
+  slope: number | 'horizontal' | 'vertical'
+}
