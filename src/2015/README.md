@@ -31,3 +31,15 @@ Calculate the surface area of each box plus the area of the smallest side for sl
 #### $\textsf{\color{green}{Part 2:}}$
 
 I refactored the part 1 solution to do both steps at once, using helper functions to calculate the wrapping paper area and ribbon length for each box.
+
+### [Day 3: Perfectly Spherical Houses in a Vacuum](https://adventofcode.com/2015/day/3)
+
+Man… I really hope I'm not jinxing myself by saying this is easy. But it really is…
+
+#### $\textsf{\color{red}{Part 1:}}$
+
+Just track Santa's position as he moves around, adding each house he visits to a set. The size of the set at the end is the answer.
+
+#### $\textsf{\color{green}{Part 2:}}$
+
+For part two, I extracted the x/y movement logic into a helper function to share between part 1 and part 2, then tracked both Santa and Robo-Santa's positions separately, alternating which one moves based on the index of the direction being processed. Again, the size of the union of both visited sets is the answer.
