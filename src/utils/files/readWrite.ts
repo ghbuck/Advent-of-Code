@@ -1,6 +1,7 @@
 import { RunParams } from '@utils/dataTypes/index.js'
 import { downloadExample, downloadInput } from '@utils/files/download.js'
 
+import { cursorPrevLine, eraseLine } from 'ansi-escapes'
 import kleur from 'kleur'
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
@@ -74,6 +75,11 @@ export const createNewDay = async (params: RunParams) => {
         if (filePath.endsWith('_example.txt')) {
           console.log(kleur.cyan(`Creating the example input file`))
           input = await downloadExample(params)
+
+          // Clear the line if no example input is available
+          if (input === undefined || input === '') {
+            process.stdout.write(eraseLine + cursorPrevLine)
+          }
         } else {
           console.log(kleur.cyan(`Creating the main input file`))
           input = await downloadInput(params)
