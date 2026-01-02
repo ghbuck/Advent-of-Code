@@ -1,12 +1,12 @@
 import { getKey, getSharedInfo, pointsAreEqual, processDirections, reconstructPath } from '@utils/algorithms/Dijkstra/helpers.js'
 import { DijkstraDirectionHandlerParams, DijkstraNode, DijkstraParams, DijkstraResults } from '@utils/algorithms/Dijkstra/interfaces.js'
-import { PriorityQueue } from '@utils/models/PriorityQueue.js'
+import { Queue } from '@utils/models/Queue.js'
 
 export const findPaths = <T>(params: DijkstraParams<T>): DijkstraResults[] => {
   const results: DijkstraResults[] = []
 
   const visited = new Set<string>()
-  const queue = new PriorityQueue<DijkstraNode>()
+  const queue = new Queue<DijkstraNode>(true)
   const parentMap = new Map<string, DijkstraNode>()
 
   const [bounds, startNode, endPoint, endChar, loggingGrid] = getSharedInfo(params.grid, params.start, params.end)

@@ -158,6 +158,38 @@ Jesus Christ… I want to feel like I'm good at what I do, but this one really m
 
 But in the end, I caved. I just couldn't figure it out. I hate that I had to do that, but at least now I can move on.
 
+### [Day 10: Factory](https://adventofcode.com/2025/day/10)
+
+This one had the smell of some problem I'd be well-prepared for if I had a CS education, something tricky with bits and maths that my OJT has not given me the tools to solve.
+
+So, I had no problem, right off the bat, describing the problem to the robots and immeditately they say:
+
+> This is a classic “buttons toggle bits” problem, and it’s secretly linear algebra wearing a trench coat. 🕵️‍♀️🔧
+
+Great…
+
+#### $\textsf{\color{red}{Part 1:}}$
+
+So, I used this problem as an opportunity to have the helps I need in wrapping my head around the concepts and the algorithms. While implementing them in my own way.
+
+Oh, you know… learning.
+
+Given the size of the number of lights (at most 10) and the number of buttons (at most 13), it was recommended to use a BFS (FIFO queue) approach to find the minimum button pushes to reach the target light configuration.
+
+Nice! I've done this before.
+
+#### $\textsf{\color{green}{Part 2:}}$
+
+Part 2 was a horse of a different color. The complexity of having counters (rather than the simple on/off of lights) meant that the state space was much larger. So, the robots recommended an ILP (Integer Linear Programming) approach.
+
+I had never done ILP before, so I had to learn a bit about it. I went back and forth with trying my own implementation versus using an existing library. In the end, I decided to use the `glpk.js` library, as it was well-documented and seemed to have good performance.
+
+I may have very much over-engineered the solution. I decided to implement a worker pool to parallelize the ILP solving across multiple CPU cores. The added complexity took time to implement, but because I had tested my problem input with a coworker's implementation, and it took more than 8s to run, I wanted to try and optimize my run time.
+
+Perhaps it was too much. Certainly after doing some more research, the Spinner class I made was entirely superfluous, as the problem ended up being solved and the spinner cleaned up before my eyes could even register the spinner starting. But I'll keep the class, as I'm sure it would be useful in future problems.
+
+Additionally, I think the refactor to PriorityQueue, making it a generic Queue class will be useful in future problems as well.
+
 ### [Day 11: Reactor](https://adventofcode.com/2025/day/11)
 
 Ah yes, another graph traversal problem…

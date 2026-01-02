@@ -3,16 +3,28 @@ interface QueueNode<T> {
   priority: number
 }
 
-export class PriorityQueue<T> {
+export class Queue<T> {
+  private isPriorityQueue: boolean
   private queue: QueueNode<T>[] = []
+
+  constructor(isPriorityQueue = false) {
+    this.isPriorityQueue = isPriorityQueue
+  }
 
   enqueue(item: T, priority = 0): void {
     this.queue.push({ item, priority })
-    this.queue.sort((a, b) => a.priority - b.priority)
+
+    if (this.isPriorityQueue) {
+      this.queue.sort((a, b) => a.priority - b.priority)
+    }
   }
 
   dequeue(): T | undefined {
     return this.queue.shift()?.item
+  }
+
+  size(): number {
+    return this.queue.length
   }
 
   isEmpty(): boolean {

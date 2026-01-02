@@ -1,12 +1,12 @@
 import { getKey, getSharedInfo, pointsAreEqual, processDirections, reconstructOptimalPaths } from '@utils/algorithms/Dijkstra/helpers.js'
 import { DijkstraDirectionHandlerParams, DijkstraNodeV2, DijkstraParams, DijkstraResults } from '@utils/algorithms/Dijkstra/interfaces.js'
-import { PriorityQueue } from '@utils/models/PriorityQueue.js'
+import { Queue } from '@utils/models/Queue.js'
 
 export const findAllOptimalPaths = <T>(params: DijkstraParams<T>): DijkstraResults[] => {
   const optimalPaths: DijkstraNodeV2[] = []
 
   const best = new Map<string, number>()
-  const queue = new PriorityQueue<DijkstraNodeV2>()
+  const queue = new Queue<DijkstraNodeV2>(true)
 
   const [bounds, startNode, endPoint, endChar, loggingGrid] = getSharedInfo(params.grid, params.start, params.end)
 

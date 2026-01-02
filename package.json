@@ -35,6 +35,7 @@
   "dependencies": {
     "@inquirer/select": "^5.0.1",
     "ansi-escapes": "^7.2.0",
+    "glpk.js": "^5.0.0",
     "kleur": "^4.1.5",
     "mac-ca": "^3.1.3"
   },
