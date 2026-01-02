@@ -19,3 +19,15 @@ Just de/increment a counter based on the input characters. Simple.
 #### $\textsf{\color{green}{Part 2:}}$
 
 The same as part 1, but keep track of the index and return a 1-based position when the counter hits -1.
+
+### [Day 2: I Was Told There Would Be No Math](https://adventofcode.com/2015/day/2)
+
+Another simple concept. Just some basic geometry.
+
+#### $\textsf{\color{red}{Part 1:}}$
+
+Calculate the surface area of each box plus the area of the smallest side for slack. That's it.
+
+#### $\textsf{\color{green}{Part 2:}}$
+
+I refactored the part 1 solution to do both steps at once, using helper functions to calculate the wrapping paper area and ribbon length for each box.
