@@ -69,7 +69,7 @@ export const createNewDay = async (params: RunParams) => {
   if (doFileDownload) {
     for (const filePath of inputFiles) {
       if (!existsSync(filePath)) {
-        let input = ''
+        let input
 
         if (filePath.endsWith('_example.txt')) {
           console.log(kleur.cyan(`Creating the example input file`))
@@ -79,7 +79,9 @@ export const createNewDay = async (params: RunParams) => {
           input = await downloadInput(params)
         }
 
-        writeFileSync(filePath, input)
+        if (input !== undefined && input !== '') {
+          writeFileSync(filePath, input)
+        }
       }
     }
   } else {
