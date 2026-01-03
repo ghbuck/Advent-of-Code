@@ -67,3 +67,19 @@ We've just got to track a few different conditions as we iterate through each st
 #### $\textsf{\color{green}{Part 2:}}$
 
 At first I was trying to do the validation in a single pass, like part 1. In the end, I ended up tracking all pairs of letters and all triplets of letters as I iterated through the string. Then, after the iteration, I checked the pairs list for any pair that appears at least twice without overlapping, and the triplets list for any triplet where the first and last letters are the same. If both conditions are met, the string is nice.
+
+### [Day 6: Probably a Fire Hazard](https://adventofcode.com/2015/day/6)
+
+This was a day where I had interfaces set up one way (a grid of booleans) and then had to refactor to a different way (a grid of numbers) for part 2.
+
+#### $\textsf{\color{red}{Part 1:}}$
+
+Got everything set up with a grid of booleans to track whether each light is on or off. Then just processed each instruction to update the grid accordingly. At the end, counted the number of lights that are on.
+
+The original implementation of `followInstructions` used a switch statement to handle the different instruction types.
+
+#### $\textsf{\color{green}{Part 2:}}$
+
+Refactored the grid to be a grid of numbers to track brightness levels. Updated the instruction processing logic to increment or decrement brightness as specified. At the end, summed up the total brightness of all lights.
+
+Also refactored `followInstructions` to use a mapping of instruction types to functions, which made the code cleaner and more extensible.
