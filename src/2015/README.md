@@ -55,3 +55,15 @@ Just keep hashing incrementing numbers until you find one that produces a hash w
 #### $\textsf{\color{green}{Part 2:}}$
 
 Same as part 1, but look for six leading zeroes instead. I also refactored `findHashInput` to return both results at once to avoid repeating the brute-force logic.
+
+### [Day 5: Doesn&apos;t He Have Intern-Elves For This?](https://adventofcode.com/2015/day/5)
+
+It's interesting how the time of day one attacks these problems can affect their perceived difficulty. I plowed through part 1 pretty quickly, but attempting to solve part 2 at 11p was a struggle. I had to take a break and come back the next morning to get it done. And, of course, once I saw the solution, it was obvious.
+
+#### $\textsf{\color{red}{Part 1:}}$
+
+We've just got to track a few different conditions as we iterate through each string. Nothing too complex. Short circuit as soon as we know a string is naughty.
+
+#### $\textsf{\color{green}{Part 2:}}$
+
+At first I was trying to do the validation in a single pass, like part 1. In the end, I ended up tracking all pairs of letters and all triplets of letters as I iterated through the string. Then, after the iteration, I checked the pairs list for any pair that appears at least twice without overlapping, and the triplets list for any triplet where the first and last letters are the same. If both conditions are met, the string is nice.
