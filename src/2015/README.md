@@ -43,3 +43,15 @@ Just track Santa's position as he moves around, adding each house he visits to a
 #### $\textsf{\color{green}{Part 2:}}$
 
 For part two, I extracted the x/y movement logic into a helper function to share between part 1 and part 2, then tracked both Santa and Robo-Santa's positions separately, alternating which one moves based on the index of the direction being processed. Again, the size of the union of both visited sets is the answer.
+
+### [Day 4: The Ideal Stocking Stuffer](https://adventofcode.com/2015/day/4)
+
+There's just no way around brute forcing this one, is there?
+
+#### $\textsf{\color{red}{Part 1:}}$
+
+Just keep hashing incrementing numbers until you find one that produces a hash with five leading zeroes.
+
+#### $\textsf{\color{green}{Part 2:}}$
+
+Same as part 1, but look for six leading zeroes instead. I also refactored `findHashInput` to return both results at once to avoid repeating the brute-force logic.
