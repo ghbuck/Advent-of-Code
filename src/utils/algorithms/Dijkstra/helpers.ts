@@ -127,7 +127,13 @@ export const processDirections = <T>({
 
       if (doAnimation) {
         loggingGrid[newPosition.y][newPosition.x] = tokenDirections.get(directionKey) ?? '.'
-        process.stdout.write(clearScreen + kleur.cyan(loggingGrid.map((row: string[]) => row.join('')).join('\n')))
+
+        // Pre-render the grid once
+        const renderedGrid = loggingGrid.map((row: string[]) => row.join('')).join('\n')
+
+        // Write in one operation instead of concatenating
+        process.stdout.write(clearScreen)
+        process.stdout.write(kleur.cyan(renderedGrid))
 
         const start = Date.now()
         let now = start
