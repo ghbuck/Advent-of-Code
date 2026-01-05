@@ -83,3 +83,17 @@ The original implementation of `followInstructions` used a switch statement to h
 Refactored the grid to be a grid of numbers to track brightness levels. Updated the instruction processing logic to increment or decrement brightness as specified. At the end, summed up the total brightness of all lights.
 
 Also refactored `followInstructions` to use a mapping of instruction types to functions, which made the code cleaner and more extensible.
+
+### [Day 7: Some Assembly Required](https://adventofcode.com/2015/day/7)
+
+I don't know why circuit simulation is always so difficult for me, but it is. I struggled with this one more than I expected to. Little things like needing to sign the NOT operation output to 16 bits really threw me off.
+
+#### $\textsf{\color{red}{Part 1:}}$
+
+In addition to the above, I initially was trying to just loop through the gates as given, handling each on that was ready as it came. But for some reason it kept hanging. So I decided to sort the gates at the get go based on if their inputs had already been seen as an output of another gate. This solved the issue.
+
+Moreover, I initially had all of the bitwise logic in the `runSystem` function. But I refactored them out into a separate `operations` mapping to clean up the code.
+
+#### $\textsf{\color{green}{Part 2:}}$
+
+For part 2, I just reset the wires and gates, then overrode wire 'b' with the result from part 1 before running the simulation again. This part was easy!
