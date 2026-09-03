@@ -33,27 +33,27 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@inquirer/select": "^5.0.1",
-    "ansi-escapes": "^7.2.0",
+    "@inquirer/select": "^5.2.4",
+    "ansi-escapes": "^7.3.0",
     "glpk.js": "^5.0.0",
     "kleur": "^4.1.5",
     "mac-ca": "^3.1.3"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.1",
-    "@jest/globals": "^30.2.0",
-    "@trivago/prettier-plugin-sort-imports": "^6.0.0",
-    "@tsconfig/node-lts": "^24.0.0",
-    "@types/node": "^24.10.1",
-    "eslint": "^9.39.1",
+    "@eslint/js": "^9.39.5",
+    "@jest/globals": "^30.5.1",
+    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
+    "@tsconfig/node-lts": "^24.0.1",
+    "@types/node": "^24.13.3",
+    "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",
-    "lint-staged": "^16.2.7",
-    "prettier": "^3.6.2",
-    "ts-jest": "^29.4.5",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.9.6",
+    "ts-jest": "^29.4.12",
     "ts-jest-resolver": "^2.0.1",
-    "tsx": "^4.20.6",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.48.0"
+    "tsx": "^4.23.13",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.69.0"
   }
 }

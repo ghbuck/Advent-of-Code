@@ -114,10 +114,9 @@ export const processCrateMovement = ({ grid, moves }: ParsingResult, drawParams:
     if (nextChar === aBox || nextChar === aBox1) {
       const cratesToMove = tryToMoveCrate(grid, nextPoint, nextChar, move, deltas)
 
-      if (cratesToMove === null)
-        continue
+      if (cratesToMove === null) continue
 
-        // Move the crates
+      // Move the crates
       ;[...cratesToMove]
         .map((crate) => crate.split(',').map(Number))
         .forEach((crate) => {

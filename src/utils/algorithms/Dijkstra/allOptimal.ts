@@ -56,10 +56,8 @@ export const findAllOptimalPaths = <T>(params: DijkstraParams<T>): DijkstraResul
     })
   }
 
-  return optimalPaths.map(
-    (node: DijkstraNodeV2): DijkstraResults => ({
-      path: reconstructOptimalPaths(node),
-      cost: node.cost,
-    }),
-  )
+  return optimalPaths.map((node: DijkstraNodeV2): DijkstraResults => ({
+    path: reconstructOptimalPaths(node),
+    cost: node.cost,
+  }))
 }
